@@ -72,9 +72,9 @@ class App:
             
             im = ImageTk.PhotoImage(im)
             
-            self.frame_dict["Background"] = tk.Label(self.frame_dict["Login"], image=im)
-            self.frame_dict["Background"].image = im
-            self.frame_dict["Background"].place(relwidth=1, relheight=1)
+            self.login_dict["Background"] = tk.Label(self.frame_dict["Login"], image=im)
+            self.login_dict["Background"].image = im
+            self.login_dict["Background"].place(relwidth=1, relheight=1)
         except:
             pass
         
@@ -133,9 +133,9 @@ class App:
             
             im = ImageTk.PhotoImage(im)
             
-            self.frame_dict["Background"] = tk.Label(self.frame_dict["Choose"], image=im)
-            self.frame_dict["Background"].image = im
-            self.frame_dict["Background"].place(relwidth=1, relheight=1)
+            self.choose_dict["Background"] = tk.Label(self.frame_dict["Choose"], image=im)
+            self.choose_dict["Background"].image = im
+            self.choose_dict["Background"].place(relwidth=1, relheight=1)
         except:
             pass
         
@@ -153,21 +153,33 @@ class App:
         #%%% [2.1.3] Contribute page
         self.contribute_dict = dict()
         
-        self.contribute_dict["Title"] = tk.Label(self.frame_dict["Contribution"], text="Choose your type of contribution", font=("Arial, 16"))
+        try:
+            im = Image.open("Pictures/selection_contribute.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.contribute_dict["Background"] = tk.Label(self.frame_dict["Contribution"], image=im)
+            self.contribute_dict["Background"].image = im
+            self.contribute_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        
+        self.contribute_dict["Title"] = tk.Label(self.frame_dict["Contribution"], text="Choose your type of contribution", font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.contribute_dict["Title"].pack(pady=20)
         
-        self.contribute_dict["Update"] = tk.Button(self.frame_dict["Contribution"], text="Update", compound="top", command= lambda: self.selection_mode(Mode.UPDATE))
-        self.contribute_dict["Update"].place(relx=0.33, rely=0.33, anchor="center")
+        self.contribute_dict["Update"] = tk.Button(self.frame_dict["Contribution"], text="Update", compound="top", width=20, height=1, bg="lightblue", command= lambda: self.selection_mode(Mode.UPDATE))
+        self.contribute_dict["Update"].place(relx=0.79, rely=0.62, anchor="center")
         
-        self.contribute_dict["Add"] = tk.Button(self.frame_dict["Contribution"], text="Create", compound="top", command= lambda: self.selection_mode(Mode.ADD))
-        self.contribute_dict["Add"].place(relx=0.66, rely=0.33, anchor="center")
+        self.contribute_dict["Add"] = tk.Button(self.frame_dict["Contribution"], text="Create", compound="top", width=20, height=1, bg="lightgreen", command= lambda: self.selection_mode(Mode.ADD))
+        self.contribute_dict["Add"].place(relx=0.21, rely=0.62, anchor="center")
         
-        self.contribute_dict["Delete"] = tk.Button(self.frame_dict["Contribution"], text="Delete", compound="top", command= lambda: self.selection_mode(Mode.DELETE))
-        self.contribute_dict["Delete"].place(relx=0.5, rely=0.66, anchor="center")
+        self.contribute_dict["Delete"] = tk.Button(self.frame_dict["Contribution"], text="Delete", compound="top", width=20, height=1, bg="#dd7b40", command= lambda: self.selection_mode(Mode.DELETE))
+        self.contribute_dict["Delete"].place(relx=0.5, rely=0.95, anchor="center")
         
         self.mode = 0
-        self.contribute_dict["Deconnection"] = tk.Button(self.frame_dict["Contribution"], text="Return", compound="top", command=self.return_back)
-        self.contribute_dict["Deconnection"].place(relx=0.5, rely=0.9, anchor="center")
+        self.contribute_dict["Deconnection"] = tk.Button(self.frame_dict["Contribution"], text="Return", compound="top", width=15, height=1, bg="#FF6347", command=self.return_back)
+        self.contribute_dict["Deconnection"].place(relx=0.90, rely=0.95, anchor="center")
         
         #%%% [2.1.4] Select Contribution
         
