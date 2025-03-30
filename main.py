@@ -281,28 +281,39 @@ class App:
         
         #%%% [2.1.4]
         self.pokemon_select_contribute_dict = dict()
-        self.pokemon_select_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonChoose"], text="Choose the type of modification", font=("Arial, 16"))
+        try:
+            im = Image.open("Pictures/choose_pokemon.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.pokemon_select_contribute_dict["Background"] = tk.Label(self.frame_dict["ContribPokemonChoose"], image=im)
+            self.pokemon_select_contribute_dict["Background"].image = im
+            self.pokemon_select_contribute_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        self.pokemon_select_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonChoose"], text="Choose the type of modification", font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.pokemon_select_contribute_dict["Title"].pack(pady=20)
         
-        self.pokemon_select_contribute_dict["Pokemon"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon", compound="top", command=self.change_frame_pokemon_pokemon)
-        self.pokemon_select_contribute_dict["Pokemon"].place(relx=0.25, rely=0.33, anchor="center")
+        self.pokemon_select_contribute_dict["Pokemon"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon", compound="top", width=20, height=1, bg="#cc9add", command=self.change_frame_pokemon_pokemon)
+        self.pokemon_select_contribute_dict["Pokemon"].place(relx=0.25, rely=0.47, anchor="center")
         
-        self.pokemon_select_contribute_dict["Moves"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon moves", compound="top", command= lambda: self.change_frame(self.frame_dict["ContribPokemonChoose"], self.frame_dict["ContribPokemonMove"]))
-        self.pokemon_select_contribute_dict["Moves"].place(relx=0.75, rely=0.33, anchor="center")
+        self.pokemon_select_contribute_dict["Moves"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon moves", compound="top", width=20, height=1, bg="#ffa500", command= lambda: self.change_frame(self.frame_dict["ContribPokemonChoose"], self.frame_dict["ContribPokemonMove"]))
+        self.pokemon_select_contribute_dict["Moves"].place(relx=0.75, rely=0.47, anchor="center")
         
-        self.pokemon_select_contribute_dict["Evolutions"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon evolution", compound="top", command= lambda: self.change_frame(self.frame_dict["ContribPokemonChoose"], self.frame_dict["ContribPokemonEvolution"]))
-        self.pokemon_select_contribute_dict["Evolutions"].place(relx=0.25, rely=0.66, anchor="center")
+        self.pokemon_select_contribute_dict["Evolutions"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon evolution", compound="top", width=20, height=1, bg="lightgrey", command= lambda: self.change_frame(self.frame_dict["ContribPokemonChoose"], self.frame_dict["ContribPokemonEvolution"]))
+        self.pokemon_select_contribute_dict["Evolutions"].place(relx=0.25, rely=0.88, anchor="center")
         
-        self.pokemon_select_contribute_dict["Abilities"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon abilities", compound="top", command= lambda: self.change_frame(self.frame_dict["ContribPokemonChoose"], self.frame_dict["ContribPokemonAbility"]))
-        self.pokemon_select_contribute_dict["Abilities"].place(relx=0.75, rely=0.66, anchor="center")
+        self.pokemon_select_contribute_dict["Abilities"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Pokemon abilities", compound="top", width=20, height=1, bg="lightblue", command= lambda: self.change_frame(self.frame_dict["ContribPokemonChoose"], self.frame_dict["ContribPokemonAbility"]))
+        self.pokemon_select_contribute_dict["Abilities"].place(relx=0.75, rely=0.88, anchor="center")
         
-        self.pokemon_select_contribute_dict["Deconnection"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Return", compound="top", command=self.return_back)
-        self.pokemon_select_contribute_dict["Deconnection"].place(relx=0.5, rely=0.9, anchor="center")
+        self.pokemon_select_contribute_dict["Deconnection"] = tk.Button(self.frame_dict["ContribPokemonChoose"], text="Return", compound="top", width=15, height=1, bg="#FF6347", command=self.return_back)
+        self.pokemon_select_contribute_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
         #%%% [2.1.4.1] Pokemon change
         
         self.pokemon_contribute_dict = dict()
 
-        self.pokemon_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemon"], text=self.title_contribute("Pokemon"), font=("Arial, 16"))
+        self.pokemon_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemon"], text=self.title_contribute("Pokemon"), font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.pokemon_contribute_dict["Title"].pack(pady=20)
         
         self.pokemon_contribute_dict["Select"] = self.get_binary("Pokemons", True)
@@ -499,8 +510,19 @@ class App:
         #%%% [2.1.4.2] Move change
 
         self.move_contribute_dict = dict()
+        try:
+            im = Image.open("Pictures/move.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.move_contribute_dict["Background"] = tk.Label(self.frame_dict["ContribMove"], image=im)
+            self.move_contribute_dict["Background"].image = im
+            self.move_contribute_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
 
-        self.move_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribMove"], text=self.title_contribute("Move"), font=("Arial, 16"))
+        self.move_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribMove"], text=self.title_contribute("Move"), font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.move_contribute_dict["Title"].pack(pady=20)
         
         
@@ -516,25 +538,25 @@ class App:
         self.move_contribute_dict["SelectUse"].insert(0, "None")
         
         self.move_add["Name"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
-        self.move_add["Name"].place(relx=0.2, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["Name"].place(relx=0.15, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_add["Name"].insert(0, "Enter a name")
         self.move_add["Name"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.move_add["Name"],"Enter a name", False))
         self.move_add["Name"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Name"],"Enter a name"))
 
-        self.move_add["SelectType"] =  tk.StringVar()
+        self.move_add["SelectType"] =  tk.StringVar(value="Type")
         self.move_add["TypeLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Type")
-        self.move_add["TypeLabel"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["TypeLabel"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_add["TypeLabel"].config(text=x))
-        self.move_add["Type"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["Type"].place(relx=0.34, rely=0.33, relwidth=0.1, relheight=0.04)
         
-        self.move_add["SelectCategory"] =  tk.StringVar()
+        self.move_add["SelectCategory"] =  tk.StringVar(value="Category")
         self.move_add["CategoryLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Category")
-        self.move_add["CategoryLabel"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["CategoryLabel"].place(relx=0.65, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_add["CategoryLabel"].config(text=x))
-        self.move_add["Category"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["Category"].place(relx=0.65, rely=0.33, relwidth=0.1, relheight=0.04)
         
         self.move_add["Power"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
-        self.move_add["Power"].place(relx=0.8, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["Power"].place(relx=0.85, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_add["Power"].insert(0, "Enter the power")
         self.move_add["Power"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.move_add["Power"],"Enter the power", False))
         self.move_add["Power"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Power"],"Enter the power"))
@@ -557,17 +579,17 @@ class App:
         self.move_add["Description"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.move_add["Description"],"Enter a description", False))
         self.move_add["Description"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Description"],"Enter a description"))
         
-        self.move_add["Create"] = tk.Button(self.frame_dict["ContribMove"], text="Create", command=self.create_move)
+        self.move_add["Create"] = tk.Button(self.frame_dict["ContribMove"], text="Create", width=20, height=1, bg="lightgreen", command=self.create_move)
         self.move_add["Create"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
         
         
-        self.move_delete["SelectMove"] =  tk.StringVar()
+        self.move_delete["SelectMove"] =  tk.StringVar(value="Move")
         self.move_delete["MoveLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Move")
         self.move_delete["MoveLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"], command=lambda x: self.move_delete["MoveLabel"].config(text=x))
         self.move_delete["Move"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
-        self.move_delete["Delete"] = tk.Button(self.frame_dict["ContribMove"], text="Delete", command=self.delete_move)
+        self.move_delete["Delete"] = tk.Button(self.frame_dict["ContribMove"], text="Delete", width=20, height=1, bg="#ffa500", command=self.delete_move)
         self.move_delete["Delete"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
         
         
@@ -577,13 +599,13 @@ class App:
         self.move_update["Name"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Name"], "Enter a name", self.move_delete["Move"], "SELECT name FROM Moves WHERE name=%s"))
         self.move_update["Name"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Name"],"Enter a name", self.move_delete["Move"], "SELECT name FROM Moves WHERE name=%s"))
 
-        self.move_update["SelectType"] =  tk.StringVar()
+        self.move_update["SelectType"] =  tk.StringVar(value="Type")
         self.move_update["TypeLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Type")
         self.move_update["TypeLabel"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_delete["TypeLabel"].config(text=x))
         self.move_update["Type"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
         
-        self.move_update["SelectCategory"] =  tk.StringVar()
+        self.move_update["SelectCategory"] =  tk.StringVar(value="Category")
         self.move_update["CategoryLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Category")
         self.move_update["CategoryLabel"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_delete["CategoryLabel"].config(text=x))
@@ -613,7 +635,7 @@ class App:
         self.move_update["Description"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Description"],"Enter a description", self.move_delete["Move"], "SELECT description FROM Moves WHERE name=%s"))
         self.move_update["Description"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Description"],"Enter a description", self.move_delete["Move"], "SELECT description FROM Moves WHERE name=%s"))
         
-        self.move_update["Update"] = tk.Button(self.frame_dict["ContribMove"], text="Update", command=lambda: self.update_move(self.move_delete["Move"]))
+        self.move_update["Update"] = tk.Button(self.frame_dict["ContribMove"], text="Update", width=20, height=1, bg="lightgreen", command=lambda: self.update_move(self.move_delete["Move"]))
         self.move_update["Update"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
         
         
@@ -624,13 +646,26 @@ class App:
         self.pokemon_evolution_contribute_dict = dict()
         self.pokemon_ability_contribute_dict = dict()
         
-        self.pokemon_move_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonMove"], text=self.title_contribute("Pokemon move"), font=("Arial, 16"))
+        try:
+            im = Image.open("Pictures/evolution.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.pokemon_evolution_contribute_dict["Background"] = tk.Label(self.frame_dict["ContribPokemonEvolution"], image=im)
+            self.pokemon_evolution_contribute_dict["Background"].image = im
+            self.pokemon_evolution_contribute_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        
+        
+        self.pokemon_move_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonMove"], text=self.title_contribute("Pokemon move"), font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.pokemon_move_contribute_dict["Title"].pack(pady=20)
         
-        self.pokemon_evolution_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonEvolution"], text=self.title_contribute("Pokemon evolution"), font=("Arial, 16"))
+        self.pokemon_evolution_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonEvolution"], text=self.title_contribute("Pokemon evolution"), font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.pokemon_evolution_contribute_dict["Title"].pack(pady=20)
         
-        self.pokemon_ability_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonAbility"], text=self.title_contribute("Pokemon ability"), font=("Arial, 16"))
+        self.pokemon_ability_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonAbility"], text=self.title_contribute("Pokemon ability"), font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.pokemon_ability_contribute_dict["Title"].pack(pady=20)
         
         self.create_pokemon_carateristic(self.pokemon_move_contribute_dict, self.frame_dict["ContribPokemonMove"], PokemonCaracteristic.MOVE)
@@ -688,6 +723,7 @@ class App:
     
     def change_frame(self, origin, frame):
         self.last_frame.append(origin)
+        self.update_button()
         frame.tkraise()
     
     def return_back(self):
@@ -816,10 +852,10 @@ class App:
             
             
             env["Delete"].destroy()
-            env["Delete"] = tk.OptionMenu(name[i][2], env["Select2"], *env["SelectUse"], command=lambda x: env["DeleteLabel"].config(text=x))
+            env["Delete"] = tk.OptionMenu(name[i][2], env["Select2"], *env["SelectUse"])
             env["Delete"].place(relx=0.5, rely=0.45, relwidth=0.1, relheight=0.04)
             env["Update1"].destroy()
-            env["Update1"] = tk.OptionMenu(name[i][2], env["Select1"], *env["SelectUse"], command=lambda x: env["UpdateLabel1"].config(text=x))
+            env["Update1"] = tk.OptionMenu(name[i][2], env["Select1"], *env["SelectUse"])
             if desc:
                 env["Update1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
             else:
@@ -836,20 +872,40 @@ class App:
         ]
         i = 0
         for env in dictionaries:
-           
+            if i == 2:
+                n = "Select an ability"
+                n2 = "Select a new ability"
+            elif i == 1:
+                n = "Select an evolution"
+                n2 = "Select a new evolution"
+            elif i == 0:
+                n = "Select a move"
+                n2 = "Select a new move"
+            else:
+                n = "An error occured"
+                n2 = "An error occured"
+            env["ChooseStr"].set("Select a pokemon")
             env["Choose"].destroy()
-            env["Choose"] = tk.OptionMenu(frame[i], env["ChooseStr"], *self.pokemon_contribute_dict["Select"], command=lambda x: env["ChooseLabel"].config(text=x))
-            env["Choose"].place(relx=0.4, rely=0.5, relwidth=0.1, relheight=0.04)
-            
+            env["Choose"] = tk.OptionMenu(frame[i], env["ChooseStr"], *self.pokemon_contribute_dict["Select"])
+            env["Choose"].place(relx=0.26, rely=0.5, relwidth=0.1, relheight=0.04)
+            env["ChooseStr2"].set(n)
             env["Choose2"].destroy()
             env["Choose2"] = tk.OptionMenu(frame[i], env["ChooseStr2"], "")
-            env["Choose2"].place(relx=0.8, rely=0.5, relwidth=0.1, relheight=0.04)
+            env["Choose2"].place(relx=0.64, rely=0.5, relwidth=0.1, relheight=0.04)
+            
+            
             if self.mode == Mode.UPDATE:
                 env["Choose3"].destroy()
+                env["ChooseStr3"].set(n2)
                 env["Choose3"] = tk.OptionMenu(frame[i], env["ChooseStr3"], "")
-                env["Choose3"].place(relx=0.4, rely=0.5, relwidth=0.1, relheight=0.04)
+                env["Choose3"].place(relx=0.45, rely=0.58, relwidth=0.1, relheight=0.04)
+                env["Apply"].config(bg="lightblue")
             else:
                 env["Choose3"].place_forget()
+                if self.mode == Mode.ADD:
+                    env["Apply"].config(bg="lightgreen")
+                else:
+                    env["Apply"].config(bg="#ffa500")
             i += 1
     def get_binary(self, name, admin):
         sql = "SELECT name FROM " + name +" WHERE id_login=%s"
@@ -889,12 +945,8 @@ class App:
         #env["Select1"].set("None")
         
         #env["Select2"].set("None")
-        env["UpdateLabel1"] = tk.Label(frame, text="Old " + name.lower())
-        if description:
-            env["UpdateLabel1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
-        else:
-            env["UpdateLabel1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
-        env["Update1"] = tk.OptionMenu(frame, env["Select1"], *env["SelectUse"], command=lambda x: env["UpdateLabel1"].config(text=x))
+        
+        env["Update1"] = tk.OptionMenu(frame, env["Select1"], *env["SelectUse"])
         if description:
             env["Update1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
         else:
@@ -909,9 +961,8 @@ class App:
         env["Update2"].bind("<FocusIn>", lambda event: self.fill_entry(event, env["Update2"],sentence, False))
         env["Update2"].bind("<FocusOut>",  lambda event: self.clear_entry(event, env["Update2"],sentence))
         
-        env["DeleteLabel"] = tk.Label(frame, text=name)
-        env["DeleteLabel"].place(relx=0.45, rely=0.4, relwidth=0.1, relheight=0.04)
-        env["Delete"] = tk.OptionMenu(frame, env["Select2"], *env["SelectUse"], command=lambda x: env["DeleteLabel"].config(text=x))
+        
+        env["Delete"] = tk.OptionMenu(frame, env["Select2"], *env["SelectUse"])
         env["Delete"].place(relx=0.45, rely=0.4, relwidth=0.1, relheight=0.04)
         if description:
             desc = "Enter a description"
@@ -929,37 +980,40 @@ class App:
         
     def change_frame_binary(self, frame, env, name, change=True, desc=False):
         if self.mode == Mode.ADD:
+            env["Confirm"].config(bg="lightgreen")
             if desc:
                 env["Description"].place(relx=0.7, rely=0.5, relwidth=0.1, relheight=0.04)
                 env["Add"].place(relx=0.25, rely=0.5, relwidth=0.1, relheight=0.04)
             else:
                 env["Add"].place(relx=0.45, rely=0.4, relwidth=0.1, relheight=0.04)
                 
-            env["DeleteLabel"].place_forget()
+            
             env["Delete"].place_forget()
-            env["UpdateLabel1"].place_forget()
+            
             env["Update1"].place_forget()
             env["Update2"].place_forget()
         elif self.mode == Mode.DELETE:
-            env["DeleteLabel"].place(relx=0.45, rely=0.4, relwidth=0.1, relheight=0.04)
+            env["Confirm"].config(bg="#ffa500")
+           
             env["Delete"].place(relx=0.45, rely=0.4, relwidth=0.1, relheight=0.04)
             env["Add"].place_forget()
             if desc:
                 env["Description"].place_forget()
-            env["UpdateLabel1"].place_forget()
+            
             env["Update1"].place_forget()
             env["Update2"].place_forget()
         elif self.mode == Mode.UPDATE:
-            env["DeleteLabel"].place_forget()
+            env["Confirm"].config(bg="lightblue")
+            
             env["Delete"].place_forget()
             env["Add"].place_forget()
             if desc:
-                env["UpdateLabel1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
+  
                 env["Update1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
                 env["Update2"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
                 env["Description"].place(relx=0.7, rely=0.5, relwidth=0.1, relheight=0.04)
             else:
-                env["UpdateLabel1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
+                
                 env["Update1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
                 env["Update2"].place(relx=0.7, rely=0.5, relwidth=0.1, relheight=0.04)
         env["Confirm"].config(text="Confirm")
@@ -991,7 +1045,7 @@ class App:
                 sql = "INSERT INTO " + table_name + " (name,id_login) VALUES (%s,%s)"
             name = env["Add"].get()
             
-            if name != "":
+            if name != "" and name != sentence:
                 if desc:
                     if d == "Enter a description":
                         d = ""
@@ -1016,7 +1070,7 @@ class App:
             nami = env["Update1"].cget("text")
             nami2 = env["Update2"].get()
 
-            if nami != "None" and ((nami2 != "" and not nami2.startswith("Enter the")) or desc):
+            if nami != "None" and ((nami2 != "" and nami2 != sentence) or desc):
                 
                 sql_type = "SELECT id FROM " + table_name + " WHERE name=%s LIMIT 1"
                 self.mycursor.execute(sql_type, (nami,))
@@ -1073,7 +1127,9 @@ class App:
         env["SelectUse"] = self.get_binary(table_name, False)
         env["Select"].insert(0,"None")
         env["SelectUse"].insert(0, "None")
-        #sleep(1)
+        env["Select1"] = tk.StringVar(value="Old " + name.lower())
+        
+        env["Select2"] = tk.StringVar(value="New " + name.lower())
         self.update_button()
         
     def create_move(self):
@@ -1249,19 +1305,19 @@ class App:
         self.move_contribute_dict["SelectUse"].insert(0, "None")
         if self.mode == Mode.ADD:
         
-            self.move_add["Name"].place(relx=0.2, rely=0.33, relwidth=0.1, relheight=0.04)        
-            self.move_add["TypeLabel"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
+            self.move_add["Name"].place(relx=0.15, rely=0.33, relwidth=0.1, relheight=0.04)        
+            self.move_add["TypeLabel"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
             self.move_add["Type"].destroy()
             self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_add["TypeLabel"].config(text=x))
-            self.move_add["Type"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)  
-            self.move_add["CategoryLabel"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)     
+            self.move_add["Type"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)  
+            self.move_add["CategoryLabel"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
             self.move_add["Category"].destroy()
             self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_add["CategoryLabel"].config(text=x))
-            self.move_add["Category"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)     
-            self.move_add["Power"].place(relx=0.8, rely=0.33, relwidth=0.1, relheight=0.04)         
-            self.move_add["PP"].place(relx=0.25, rely=0.66, relwidth=0.1, relheight=0.04) 
-            self.move_add["Priority"].place(relx=0.5, rely=0.66, relwidth=0.1, relheight=0.04)
-            self.move_add["Description"].place(relx=0.75, rely=0.66, relwidth=0.1, relheight=0.04)
+            self.move_add["Category"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
+            self.move_add["Power"].place(relx=0.75, rely=0.33, relwidth=0.1, relheight=0.04)         
+            self.move_add["PP"].place(relx=0.2, rely=0.66, relwidth=0.1, relheight=0.04) 
+            self.move_add["Priority"].place(relx=0.45, rely=0.66, relwidth=0.1, relheight=0.04)
+            self.move_add["Description"].place(relx=0.7, rely=0.66, relwidth=0.1, relheight=0.04)
             self.move_add["Create"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
             for key in self.move_delete.keys():
                 if not isinstance(self.move_delete[key], tk.StringVar):
@@ -1282,19 +1338,19 @@ class App:
                 if not isinstance(self.move_update[key], tk.StringVar):
                     self.move_update[key].place_forget()
         elif self.mode == Mode.UPDATE:
-            self.move_update["Name"].place(relx=0.2, rely=0.33, relwidth=0.1, relheight=0.04)        
-            self.move_update["TypeLabel"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
+            self.move_update["Name"].place(relx=0.15, rely=0.33, relwidth=0.1, relheight=0.04)        
+            self.move_update["TypeLabel"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
             self.move_update["Type"].destroy()
             self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_update["TypeLabel"].config(text=x))
-            self.move_update["Type"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)  
-            self.move_update["CategoryLabel"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)     
+            self.move_update["Type"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)  
+            self.move_update["CategoryLabel"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
             self.move_update["Category"].destroy()
             self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_update["CategoryLabel"].config(text=x))
-            self.move_update["Category"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)     
-            self.move_update["Power"].place(relx=0.8, rely=0.33, relwidth=0.1, relheight=0.04)         
-            self.move_update["PP"].place(relx=0.25, rely=0.66, relwidth=0.1, relheight=0.04) 
-            self.move_update["Priority"].place(relx=0.5, rely=0.66, relwidth=0.1, relheight=0.04)
-            self.move_update["Description"].place(relx=0.75, rely=0.66, relwidth=0.1, relheight=0.04)
+            self.move_update["Category"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
+            self.move_update["Power"].place(relx=0.75, rely=0.33, relwidth=0.1, relheight=0.04)         
+            self.move_update["PP"].place(relx=0.2, rely=0.66, relwidth=0.1, relheight=0.04) 
+            self.move_update["Priority"].place(relx=0.45, rely=0.66, relwidth=0.1, relheight=0.04)
+            self.move_update["Description"].place(relx=0.7, rely=0.66, relwidth=0.1, relheight=0.04)
             self.move_update["Update"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
             self.move_delete["Move"].destroy()
             self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"], command=lambda x: self.move_delete["MoveLabel"].config(text=x))
@@ -1690,11 +1746,19 @@ class App:
         if caracteristic == PokemonCaracteristic.ABILITY:
             if self.mode == Mode.ADD:
                 s = "(id_login= 1 OR id_login=%s)"
+            elif not op:
+                s = "PA.id_login=%s"
             else:
                 s = "id_login=%s"
-            sql = "SELECT name FROM Abilities WHERE id not in (SELECT A.id FROM PokemonAbilities AS PA JOIN Pokemons AS P ON PA.id_pokemon = P.id JOIN Abilities AS A ON A.id = PA.id_ability WHERE P.name=%s) AND " + s
+            if self.mode == Mode.ADD or op:
+                sql = "SELECT name FROM Abilities WHERE id not in (SELECT A.id FROM PokemonAbilities AS PA JOIN Pokemons AS P ON PA.id_pokemon = P.id JOIN Abilities AS A ON A.id = PA.id_ability WHERE P.name=%s) AND " + s
+            else:
+                sql = "SELECT A.name FROM PokemonAbilities AS PA JOIN Pokemons AS P ON PA.id_pokemon = P.id JOIN Abilities AS A ON A.id = PA.id_ability WHERE P.name=%s AND " + s
+                
             if op:
-                sql += "AND name!=%s"
+   
+                sql += " AND name!=%s"
+  
                 param = (val, self.id,env["Choose2"].cget("text"))
             else:
                 param = (val,self.id)
@@ -1704,27 +1768,45 @@ class App:
         elif caracteristic == PokemonCaracteristic.EVOLUTION:
             if self.mode == Mode.ADD:
                 s = "(id_login= 1 OR id_login=%s)"
+            elif not op:
+                s = "E.id_login=%s"
             else:
                 s = "id_login=%s"
-            sql = "SELECT name FROM Pokemons WHERE id not in (SELECT P1.id FROM Evolutions AS E JOIN Pokemons AS P1 ON E.id_base = P1.id JOIN Pokemons AS P2 ON P2.id = E.id_evolution WHERE P1.name=%s) AND name!=%s AND " + s
-            if op:
-                sql += "AND name!=%s"
-                param = (val, val, self.id, env["Choose2"].cget("text"))
+            if self.mode == Mode.ADD or op:
+                sql = "SELECT name FROM Pokemons WHERE id not in (SELECT P2.id FROM Evolutions AS E JOIN Pokemons AS P1 ON E.id_base = P1.id JOIN Pokemons AS P2 ON P2.id = E.id_evolution WHERE P1.name=%s) AND name!=%s AND " + s
             else:
-                param = (val,val, self.id)
-            
+                sql = "SELECT P2.name FROM Evolutions AS E JOIN Pokemons AS P1 ON E.id_base = P1.id JOIN Pokemons AS P2 ON P2.id = E.id_evolution WHERE P1.name=%s  AND " + s
+            if op:
+               
+                    sql += " AND name!=%s"
+                    param = (val, val, self.id, env["Choose2"].cget("text"))
+      
+            else:
+                if self.mode == Mode.ADD:
+                    param = (val, val, self.id)
+                else:
+                    param = (val, self.id)
+           
             self.mycursor.execute(sql, param)
             l = self.mycursor.fetchall()
             l = list(l)
         elif caracteristic == PokemonCaracteristic.MOVE:
             if self.mode == Mode.ADD:
                 s = "(id_login= 1 OR id_login=%s)"
+            
+            elif not op:
+                s = "PM.id_login=%s"
             else:
                 s = "id_login=%s"
-            sql = "SELECT name FROM Moves WHERE id not in (SELECT M.id FROM PokemonMoves AS PM JOIN Pokemons AS P ON PM.id_pokemon = P.id JOIN Moves AS M ON M.id = PM.id_move WHERE P.name=%s) AND " + s
+                
+            if self.mode == Mode.ADD or op:  
+                sql = "SELECT name FROM Moves WHERE id not in (SELECT M.id FROM PokemonMoves AS PM JOIN Pokemons AS P ON PM.id_pokemon = P.id JOIN Moves AS M ON M.id = PM.id_move WHERE P.name=%s) AND " + s
+            else:
+                sql = "SELECT M.name FROM PokemonMoves AS PM JOIN Pokemons AS P ON PM.id_pokemon = P.id JOIN Moves AS M ON M.id = PM.id_move WHERE P.name=%s AND " + s
             if op:
-                sql += "AND name!=%s"
-                param = (val, self.id, env["Choose2"].cget("text"))
+              
+                    sql += " AND name!=%s"
+                    param = (val, self.id, env["Choose2"].cget("text"))
             else:
                 param = (val, self.id)
             self.mycursor.execute(sql, param)
@@ -1749,10 +1831,9 @@ class App:
         
         env["ChooseStr"].trace_add("write", lambda *args: self.update_selection_box(env, caracteristic))
         
-        env["ChooseLabel"] = tk.Label(frame, text="Pokemon")
-        env["ChooseLabel"].place(relx=0.4, rely=0.5, relwidth=0.1, relheight=0.04)
-        env["Choose"] = tk.OptionMenu(frame, env["ChooseStr"], *self.pokemon_contribute_dict["Select"], command=lambda x: env["ChooseLabel"].config(text=x))
-        env["Choose"].place(relx=0.4, rely=0.5, relwidth=0.1, relheight=0.04)
+        
+        env["Choose"] = tk.OptionMenu(frame, env["ChooseStr"], *self.pokemon_contribute_dict["Select"])
+        env["Choose"].place(relx=0.26, rely=0.5, relwidth=0.1, relheight=0.04)
         
         if caracteristic == PokemonCaracteristic.ABILITY:
             n = "Select an ability"
@@ -1772,20 +1853,21 @@ class App:
         env["ChooseStr2"].trace_add("write", lambda *args: self.update_selection_box(env, caracteristic, True))
         
         env["Choose2"] = tk.OptionMenu(frame, env["ChooseStr2"], "")
-        env["Choose2"].place(relx=0.8, rely=0.5, relwidth=0.1, relheight=0.04)
+        env["Choose2"].place(relx=0.64, rely=0.5, relwidth=0.1, relheight=0.04)
         
         
         env["ChooseStr3"] =  tk.StringVar(value=n2)
+        
         env["Choose3"] = tk.OptionMenu(frame, env["ChooseStr3"], "")
-        env["Choose3"].place(relx=0.5, rely=0.7, relwidth=0.1, relheight=0.04)
+        env["Choose3"].place(relx=0.45, rely=0.7, relwidth=0.1, relheight=0.04)
         
         
         env["Apply"] = tk.Button(frame, text="Apply change", command=lambda: self.apply_pokemon_carateristic(env, frame, caracteristic))
         env["Apply"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
         
         
-        env["Deconnection"] = tk.Button(frame, text="Return", compound="top", command=self.return_back)
-        env["Deconnection"].place(relx=0.9, rely=0.9, anchor="center")
+        env["Deconnection"] = tk.Button(frame, text="Return", compound="top", width=15, height=1, bg="#FF6347", command=self.return_back)
+        env["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
     
     def apply_pokemon_carateristic(self, env, frame, caracteristic):
         match self.mode:
@@ -1830,7 +1912,7 @@ class App:
                     env["Apply"].config(text="Select all the field")
                 env["Choose3"].destroy()
                 env["Choose3"] = tk.OptionMenu(frame, env["ChooseStr3"], "")
-                env["Choose3"].place(relx=0.5, rely=0.7, relwidth=0.1, relheight=0.04)
+                env["Choose3"].place(relx=0.45, rely=0.7, relwidth=0.1, relheight=0.04)
             case Mode.UPDATE:
                 match caracteristic:
                     case PokemonCaracteristic.ABILITY:
@@ -1915,8 +1997,8 @@ class App:
                     env["Apply"].config(text="Select all the field")
             case _:
                 pass
-        
         self.update_button()
+        
     def mainloop(self):
         self.change_frame(None, self.frame_dict["Login"])
         self.root.mainloop()
