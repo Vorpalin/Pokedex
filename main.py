@@ -312,7 +312,17 @@ class App:
         #%%% [2.1.4.1] Pokemon change
         
         self.pokemon_contribute_dict = dict()
-
+        try:
+            im = Image.open("Pictures/new_pokemon.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.pokemon_contribute_dict["Background"] = tk.Label(self.frame_dict["ContribPokemon"], image=im)
+            self.pokemon_contribute_dict["Background"].image = im
+            self.pokemon_contribute_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
         self.pokemon_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemon"], text=self.title_contribute("Pokemon"), font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.pokemon_contribute_dict["Title"].pack(pady=20)
         
@@ -344,9 +354,9 @@ class App:
         self.pokemon_add["Image"] = tk.Button(self.frame_dict["ContribPokemon"], text="Image selection", compound="top", command=lambda: self.get_image_path(self.pokemon_add["ImageLabel"], self.pokemon_add["Image"]))
         self.pokemon_add["Image"].place(relx=0.1, rely=0.8, relwidth=0.1, relheight=0.04)
         
-        self.pokemon_add["SelectType1"] =  tk.StringVar()
-        self.pokemon_add["SelectType2"] =  tk.StringVar()
-        self.pokemon_add["SelectTier"] =  tk.StringVar()
+        self.pokemon_add["SelectType1"] =  tk.StringVar(value="Type 1")
+        self.pokemon_add["SelectType2"] =  tk.StringVar(value="Type 2")
+        self.pokemon_add["SelectTier"] =  tk.StringVar(value="Tier")
         
         
         
@@ -403,25 +413,26 @@ class App:
         self.pokemon_add["SpDef"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.pokemon_add["SpDef"],"Enter the special defense"))
         
         
-        self.pokemon_add["Create"] = tk.Button(self.frame_dict["ContribPokemon"], text="Create", command=self.create_pokemon)
+        self.pokemon_add["Create"] = tk.Button(self.frame_dict["ContribPokemon"], text="Create", width=20, height=1, bg="lightgreen", command=self.create_pokemon)
         self.pokemon_add["Create"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
         
         
-        self.pokemon_contribute_dict["Deconnection"] = tk.Button(self.frame_dict["ContribPokemon"], text="Return", compound="top", command=self.return_back)
-        self.pokemon_contribute_dict["Deconnection"].place(relx=0.9, rely=0.9, anchor="center")
+        self.pokemon_contribute_dict["Deconnection"] = tk.Button(self.frame_dict["ContribPokemon"], text="Return", compound="top", width=15, height=1, bg="#FF6347", command=self.return_back)
+        self.pokemon_contribute_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
+
         
         self.pokemon_delete = dict()
-        self.pokemon_delete["SelectPokemon"] = tk.StringVar()
+        self.pokemon_delete["SelectPokemon"] = tk.StringVar(value="Pokemon")
         self.pokemon_delete["ChooseLabel"] = tk.Label(self.frame_dict["ContribPokemon"], text="Pokemon")
         self.pokemon_delete["ChooseLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         self.pokemon_delete["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_delete["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_delete["ChooseLabel"].config(text=x))
         self.pokemon_delete["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
-        self.pokemon_delete["Delete"] = tk.Button(self.frame_dict["ContribPokemon"], text="Delete", command=self.delete_pokemon)
+        self.pokemon_delete["Delete"] = tk.Button(self.frame_dict["ContribPokemon"], text="Delete", width=20, height=1, bg="#ffa500", command=self.delete_pokemon)
         self.pokemon_delete["Delete"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update = dict()
-        self.pokemon_update["SelectPokemon"] = tk.StringVar()
+        self.pokemon_update["SelectPokemon"] = tk.StringVar(value="Pokemon")
         self.pokemon_update["ChooseLabel"] = tk.Label(self.frame_dict["ContribPokemon"], text="Pokemon")
         self.pokemon_update["ChooseLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_update["ChooseLabel"].config(text=x))
@@ -446,9 +457,9 @@ class App:
         self.pokemon_update["Image"] = tk.Button(self.frame_dict["ContribPokemon"], text="Image selection", compound="top", command=lambda: self.get_image_path(self.pokemon_update["ImageLabel"], self.pokemon_update["Image"]))
         self.pokemon_update["Image"].place(relx=0.1, rely=0.8, relwidth=0.1, relheight=0.04)
         
-        self.pokemon_update["SelectType1"] =  tk.StringVar()
-        self.pokemon_update["SelectType2"] =  tk.StringVar()
-        self.pokemon_update["SelectTier"] =  tk.StringVar()
+        self.pokemon_update["SelectType1"] =  tk.StringVar(value="Type 1")
+        self.pokemon_update["SelectType2"] =  tk.StringVar(value= "Type 2")
+        self.pokemon_update["SelectTier"] =  tk.StringVar(value="Tier")
         
         
         
@@ -505,7 +516,7 @@ class App:
         self.pokemon_update["SpDef"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["SpDef"],"Enter the special defense", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s"))
         
         
-        self.pokemon_update["Update"] = tk.Button(self.frame_dict["ContribPokemon"], text="Update", command=self.update_pokemon)
+        self.pokemon_update["Update"] = tk.Button(self.frame_dict["ContribPokemon"], text="Update", width=20, height=1, bg="lightblue", command=self.update_pokemon)
         self.pokemon_update["Update"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
         #%%% [2.1.4.2] Move change
 
@@ -658,7 +669,29 @@ class App:
         except:
             pass
         
+        try:
+            im = Image.open("Pictures/ability.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.pokemon_ability_contribute_dict["Background"] = tk.Label(self.frame_dict["ContribPokemonAbility"], image=im)
+            self.pokemon_ability_contribute_dict["Background"].image = im
+            self.pokemon_ability_contribute_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
         
+        try:
+            im = Image.open("Pictures/move.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.move_contribute_dict["Background"] = tk.Label(self.frame_dict["ContribPokemonMove"], image=im)
+            self.move_contribute_dict["Background"].image = im
+            self.move_contribute_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
         self.pokemon_move_contribute_dict["Title"] = tk.Label(self.frame_dict["ContribPokemonMove"], text=self.title_contribute("Pokemon move"), font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
         self.pokemon_move_contribute_dict["Title"].pack(pady=20)
         
@@ -907,6 +940,16 @@ class App:
                 else:
                     env["Apply"].config(bg="#ffa500")
             i += 1
+        self.pokemon_add["SelectType1"].set(value="Type 1")
+        self.pokemon_add["SelectType2"].set(value="Type 2")
+        self.pokemon_add["SelectTier"].set(value="Tier")
+        
+        self.pokemon_update["SelectPokemon"].set(value="Pokemon")
+        
+        self.pokemon_update["SelectType1"].set(value="Type 1")
+        self.pokemon_update["SelectType2"].set(value="Type 2")
+        self.pokemon_update["SelectTier"].set(value="Tier")
+        self.pokemon_delete["SelectPokemon"] = tk.StringVar(value="Pokemon")
     def get_binary(self, name, admin):
         sql = "SELECT name FROM " + name +" WHERE id_login=%s"
         if admin:
