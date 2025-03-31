@@ -62,6 +62,7 @@ class App:
         self.frame_dict["ContribMove"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["ContribType"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["ContribTiers"] = tk.Frame(self.container, bg="lightblue")
+        self.frame_dict["Results"] = tk.Frame(self.container, bg="lightblue")
         
         for frame in self.frame_dict.values():
             frame.place(relwidth=1, relheight=1)
@@ -360,20 +361,17 @@ class App:
         
         
         
-        self.pokemon_add["Type1Label"] = tk.Label(self.frame_dict["ContribPokemon"], text="Type 1")
-        self.pokemon_add["Type1Label"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
-        self.pokemon_add["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType1"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_add["Type1Label"].config(text=x))
+        
+        self.pokemon_add["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType1"], *self.type_contribute_dict["Select"])
         self.pokemon_add["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
         
-        self.pokemon_add["Type2Label"] = tk.Label(self.frame_dict["ContribPokemon"], text="Type 2")
-        self.pokemon_add["Type2Label"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
-        self.pokemon_add["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType2"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_add["Type2Label"].config(text=x))
+        
+        self.pokemon_add["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType2"], *self.type_contribute_dict["Select"])
         self.pokemon_add["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
         
 
-        self.pokemon_add["TierLabel"] = tk.Label(self.frame_dict["ContribPokemon"], text="Tier")
-        self.pokemon_add["TierLabel"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
-        self.pokemon_add["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectTier"], *self.tier_contribute_dict["Select"], command=lambda x: self.pokemon_add["TierLabel"].config(text=x))
+        
+        self.pokemon_add["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectTier"], *self.tier_contribute_dict["Select"])
         self.pokemon_add["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
         
         self.pokemon_add["HP"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
@@ -423,9 +421,8 @@ class App:
         
         self.pokemon_delete = dict()
         self.pokemon_delete["SelectPokemon"] = tk.StringVar(value="Pokemon")
-        self.pokemon_delete["ChooseLabel"] = tk.Label(self.frame_dict["ContribPokemon"], text="Pokemon")
-        self.pokemon_delete["ChooseLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
-        self.pokemon_delete["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_delete["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_delete["ChooseLabel"].config(text=x))
+        
+        self.pokemon_delete["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_delete["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"])
         self.pokemon_delete["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.pokemon_delete["Delete"] = tk.Button(self.frame_dict["ContribPokemon"], text="Delete", width=20, height=1, bg="#ffa500", command=self.delete_pokemon)
@@ -433,23 +430,22 @@ class App:
         
         self.pokemon_update = dict()
         self.pokemon_update["SelectPokemon"] = tk.StringVar(value="Pokemon")
-        self.pokemon_update["ChooseLabel"] = tk.Label(self.frame_dict["ContribPokemon"], text="Pokemon")
-        self.pokemon_update["ChooseLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
-        self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_update["ChooseLabel"].config(text=x))
+        
+        self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"])
         self.pokemon_update["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
         
         self.pokemon_update["NID"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["NID"].place(relx=0.1, rely=0.2, relwidth=0.1, relheight=0.04)
         self.pokemon_update["NID"].insert(0, "Enter the national id")
-        self.pokemon_update["NID"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["NID"],"Enter the national id", self.pokemon_update["Choose"], "SELECT nid FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["NID"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["NID"],"Enter the national id", self.pokemon_update["Choose"], "SELECT nid FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["NID"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["NID"],"Enter the national id", self.pokemon_update["Choose"], "SELECT nid FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["NID"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["NID"],"Enter the national id", self.pokemon_update["Choose"], "SELECT nid FROM Pokemons WHERE name=%s LIMIT 1"))
         
         self.pokemon_update["Name"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["Name"].place(relx=0.1, rely=0.5, relwidth=0.1, relheight=0.04)
         self.pokemon_update["Name"].insert(0, "Enter the name")
-        self.pokemon_update["Name"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Name"],"Enter the name", self.pokemon_update["Choose"], "SELECT name FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["Name"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Name"],"Enter the name", self.pokemon_update["Choose"], "SELECT name FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["Name"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Name"],"Enter the name", self.pokemon_update["Choose"], "SELECT name FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["Name"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Name"],"Enter the name", self.pokemon_update["Choose"], "SELECT name FROM Pokemons WHERE name=%s LIMIT 1"))
         
         
         self.pokemon_update["ImageLabel"] = tk.Label(self.frame_dict["ContribPokemon"], text="Type 1")
@@ -463,57 +459,54 @@ class App:
         
         
         
-        self.pokemon_update["Type1Label"] = tk.Label(self.frame_dict["ContribPokemon"], text="Type 1")
-        self.pokemon_update["Type1Label"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
-        self.pokemon_update["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType1"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_update["Type1Label"].config(text=x))
+        
+        self.pokemon_update["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType1"], *self.type_contribute_dict["Select"])
         self.pokemon_update["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
         
-        self.pokemon_update["Type2Label"] = tk.Label(self.frame_dict["ContribPokemon"], text="Type 2")
-        self.pokemon_update["Type2Label"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
-        self.pokemon_update["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType2"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_update["Type2Label"].config(text=x))
+        
+        self.pokemon_update["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType2"], *self.type_contribute_dict["Select"])
         self.pokemon_update["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
         
 
-        self.pokemon_update["TierLabel"] = tk.Label(self.frame_dict["ContribPokemon"], text="Tier")
-        self.pokemon_update["TierLabel"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
-        self.pokemon_update["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectTier"], *self.tier_contribute_dict["Select"], command=lambda x: self.pokemon_update["TierLabel"].config(text=x))
+      
+        self.pokemon_update["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectTier"], *self.tier_contribute_dict["Select"])
         self.pokemon_update["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update["HP"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["HP"].place(relx=0.6, rely=0.2, relwidth=0.1, relheight=0.04)
         self.pokemon_update["HP"].insert(0, "Enter the HP")
-        self.pokemon_update["HP"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["HP"],"Enter the HP", self.pokemon_update["Choose"], "SELECT hp FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["HP"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["HP"],"Enter the HP", self.pokemon_update["Choose"], "SELECT hp FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["HP"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["HP"],"Enter the HP", self.pokemon_update["Choose"], "SELECT hp FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["HP"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["HP"],"Enter the HP", self.pokemon_update["Choose"], "SELECT hp FROM Pokemons WHERE name=%s LIMIT 1"))
         
         self.pokemon_update["Attack"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["Attack"].place(relx=0.6, rely=0.5, relwidth=0.1, relheight=0.04)
         self.pokemon_update["Attack"].insert(0, "Enter the attack")
-        self.pokemon_update["Attack"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Attack"],"Enter the attack", self.pokemon_update["Choose"], "SELECT attack FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["Attack"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Attack"],"Enter the attack", self.pokemon_update["Choose"], "SELECT attack FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["Attack"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Attack"],"Enter the attack", self.pokemon_update["Choose"], "SELECT attack FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["Attack"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Attack"],"Enter the attack", self.pokemon_update["Choose"], "SELECT attack FROM Pokemons WHERE name=%s LIMIT 1"))
         
         self.pokemon_update["Defense"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["Defense"].place(relx=0.6, rely=0.8, relwidth=0.1, relheight=0.04)
         self.pokemon_update["Defense"].insert(0, "Enter the defense")
-        self.pokemon_update["Defense"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Defense"],"Enter the defense", self.pokemon_update["Choose"], "SELECT defense FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["Defense"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Defense"],"Enter the defense", self.pokemon_update["Choose"], "SELECT defense FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["Defense"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Defense"],"Enter the defense", self.pokemon_update["Choose"], "SELECT defense FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["Defense"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Defense"],"Enter the defense", self.pokemon_update["Choose"], "SELECT defense FROM Pokemons WHERE name=%s LIMIT 1"))
         
         self.pokemon_update["Speed"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["Speed"].place(relx=0.8, rely=0.2, relwidth=0.1, relheight=0.04)
         self.pokemon_update["Speed"].insert(0, "Enter the speed")
-        self.pokemon_update["Speed"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Speed"],"Enter the speed", self.pokemon_update["Choose"], "SELECT speed FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["Speed"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Speed"],"Enter the speed", self.pokemon_update["Choose"], "SELECT speed FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["Speed"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["Speed"],"Enter the speed", self.pokemon_update["Choose"], "SELECT speed FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["Speed"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["Speed"],"Enter the speed", self.pokemon_update["Choose"], "SELECT speed FROM Pokemons WHERE name=%s LIMIT 1"))
         
         self.pokemon_update["SpAt"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["SpAt"].place(relx=0.8, rely=0.5, relwidth=0.1, relheight=0.04)
         self.pokemon_update["SpAt"].insert(0, "Enter the special attack")
-        self.pokemon_update["SpAt"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["SpAt"],"Enter the special attack", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["SpAt"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["SpAt"],"Enter the special attack", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["SpAt"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["SpAt"],"Enter the special attack", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["SpAt"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["SpAt"],"Enter the special attack", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s LIMIT 1"))
         
         self.pokemon_update["SpDef"] = tk.Entry(self.frame_dict["ContribPokemon"], width=35, fg="gray")
         self.pokemon_update["SpDef"].place(relx=0.8, rely=0.8, relwidth=0.1, relheight=0.04)
         self.pokemon_update["SpDef"].insert(0, "Enter the special defense")
-        self.pokemon_update["SpDef"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["SpDef"],"Enter the special defense", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s"))
-        self.pokemon_update["SpDef"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["SpDef"],"Enter the special defense", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s"))
+        self.pokemon_update["SpDef"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.pokemon_update["SpDef"],"Enter the special defense", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s LIMIT 1"))
+        self.pokemon_update["SpDef"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.pokemon_update["SpDef"],"Enter the special defense", self.pokemon_update["Choose"], "SELECT sp_def FROM Pokemons WHERE name=%s LIMIT 1"))
         
         
         self.pokemon_update["Update"] = tk.Button(self.frame_dict["ContribPokemon"], text="Update", width=20, height=1, bg="lightblue", command=self.update_pokemon)
@@ -555,15 +548,13 @@ class App:
         self.move_add["Name"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Name"],"Enter a name"))
 
         self.move_add["SelectType"] =  tk.StringVar(value="Type")
-        self.move_add["TypeLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Type")
-        self.move_add["TypeLabel"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
-        self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_add["TypeLabel"].config(text=x))
+       
+        self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"])
         self.move_add["Type"].place(relx=0.34, rely=0.33, relwidth=0.1, relheight=0.04)
         
         self.move_add["SelectCategory"] =  tk.StringVar(value="Category")
-        self.move_add["CategoryLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Category")
-        self.move_add["CategoryLabel"].place(relx=0.65, rely=0.33, relwidth=0.1, relheight=0.04)
-        self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_add["CategoryLabel"].config(text=x))
+
+        self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"])
         self.move_add["Category"].place(relx=0.65, rely=0.33, relwidth=0.1, relheight=0.04)
         
         self.move_add["Power"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
@@ -580,9 +571,9 @@ class App:
         
         self.move_add["Priority"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_add["Priority"].place(relx=0.5, rely=0.66, relwidth=0.1, relheight=0.04)
-        self.move_add["Priority"].insert(0, "Enter the priority")
-        self.move_add["Priority"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.move_add["Priority"],"Enter the priority", False))
-        self.move_add["Priority"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Priority"],"Enter the priority"))
+        self.move_add["Priority"].insert(0, "Enter the accuracy")
+        self.move_add["Priority"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.move_add["Priority"],"Enter the accuracy", False))
+        self.move_add["Priority"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Priority"],"Enter the accuracy"))
         
         self.move_add["Description"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_add["Description"].place(relx=0.75, rely=0.66, relwidth=0.1, relheight=0.04)
@@ -595,9 +586,8 @@ class App:
         
         
         self.move_delete["SelectMove"] =  tk.StringVar(value="Move")
-        self.move_delete["MoveLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Move")
-        self.move_delete["MoveLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
-        self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"], command=lambda x: self.move_delete["MoveLabel"].config(text=x))
+        
+        self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"])
         self.move_delete["Move"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.move_delete["Delete"] = tk.Button(self.frame_dict["ContribMove"], text="Delete", width=20, height=1, bg="#ffa500", command=self.delete_move)
@@ -607,44 +597,42 @@ class App:
         self.move_update["Name"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_update["Name"].place(relx=0.2, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_update["Name"].insert(0, "Enter a name")
-        self.move_update["Name"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Name"], "Enter a name", self.move_delete["Move"], "SELECT name FROM Moves WHERE name=%s"))
-        self.move_update["Name"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Name"],"Enter a name", self.move_delete["Move"], "SELECT name FROM Moves WHERE name=%s"))
+        self.move_update["Name"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Name"], "Enter a name", self.move_delete["Move"], "SELECT name FROM Moves WHERE name=%s LIMIT 1"))
+        self.move_update["Name"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Name"],"Enter a name", self.move_delete["Move"], "SELECT name FROM Moves WHERE name=%s LIMIT 1"))
 
         self.move_update["SelectType"] =  tk.StringVar(value="Type")
-        self.move_update["TypeLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Type")
-        self.move_update["TypeLabel"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
-        self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_delete["TypeLabel"].config(text=x))
+        
+        self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"])
         self.move_update["Type"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
         
         self.move_update["SelectCategory"] =  tk.StringVar(value="Category")
-        self.move_update["CategoryLabel"] = tk.Label(self.frame_dict["ContribMove"], text="Category")
-        self.move_update["CategoryLabel"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
-        self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_delete["CategoryLabel"].config(text=x))
+        
+        self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"])
         self.move_update["Category"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
         
         self.move_update["Power"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_update["Power"].place(relx=0.8, rely=0.33, relwidth=0.1, relheight=0.04)
         self.move_update["Power"].insert(0, "Enter the power")
-        self.move_update["Power"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Power"],"Enter the power", self.move_delete["Move"], "SELECT power FROM Moves WHERE name=%s"))
-        self.move_update["Power"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Power"],"Enter the power", self.move_delete["Move"], "SELECT power FROM Moves WHERE name=%s"))
+        self.move_update["Power"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Power"],"Enter the power", self.move_delete["Move"], "SELECT power FROM Moves WHERE name=%s LIMIT 1"))
+        self.move_update["Power"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Power"],"Enter the power", self.move_delete["Move"], "SELECT power FROM Moves WHERE name=%s LIMIT 1"))
         
         self.move_update["PP"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_update["PP"].place(relx=0.25, rely=0.66, relwidth=0.1, relheight=0.04)
         self.move_update["PP"].insert(0, "Enter the PP")
-        self.move_update["PP"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["PP"],"Enter the PP", self.move_delete["Move"], "SELECT pp FROM Moves WHERE name=%s"))
-        self.move_update["PP"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["PP"],"Enter the PP", self.move_delete["Move"], "SELECT pp FROM Moves WHERE name=%s"))
+        self.move_update["PP"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["PP"],"Enter the PP", self.move_delete["Move"], "SELECT pp FROM Moves WHERE name=%s LIMIT 1"))
+        self.move_update["PP"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["PP"],"Enter the PP", self.move_delete["Move"], "SELECT pp FROM Moves WHERE name=%s LIMIT 1"))
         
         self.move_update["Priority"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_update["Priority"].place(relx=0.5, rely=0.66, relwidth=0.1, relheight=0.04)
-        self.move_update["Priority"].insert(0, "Enter the priority")
-        self.move_update["Priority"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Priority"],"Enter the priority", self.move_delete["Move"], "SELECT priority FROM Moves WHERE name=%s"))
-        self.move_update["Priority"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Priority"],"Enter the priority", self.move_delete["Move"], "SELECT priority FROM Moves WHERE name=%s"))
+        self.move_update["Priority"].insert(0, "Enter the accuracy")
+        self.move_update["Priority"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Priority"],"Enter the accuracy", self.move_delete["Move"], "SELECT accuracy FROM Moves WHERE name=%s LIMIT 1"))
+        self.move_update["Priority"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Priority"],"Enter the accuracy", self.move_delete["Move"], "SELECT accuracy FROM Moves WHERE name=%s LIMIT 1"))
         
         self.move_update["Description"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_update["Description"].place(relx=0.75, rely=0.66, relwidth=0.1, relheight=0.04)
         self.move_update["Description"].insert(0, "Enter a description")
-        self.move_update["Description"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Description"],"Enter a description", self.move_delete["Move"], "SELECT description FROM Moves WHERE name=%s"))
-        self.move_update["Description"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Description"],"Enter a description", self.move_delete["Move"], "SELECT description FROM Moves WHERE name=%s"))
+        self.move_update["Description"].bind("<FocusIn>", lambda event: self.fill_entry_value_by_name(event, self.move_update["Description"],"Enter a description", self.move_delete["Move"], "SELECT description FROM Moves WHERE name=%s LIMIT 1"))
+        self.move_update["Description"].bind("<FocusOut>",  lambda event: self.clear_entry_value_by_name(event, self.move_update["Description"],"Enter a description", self.move_delete["Move"], "SELECT description FROM Moves WHERE name=%s LIMIT 1"))
         
         self.move_update["Update"] = tk.Button(self.frame_dict["ContribMove"], text="Update", width=20, height=1, bg="lightgreen", command=lambda: self.update_move(self.move_delete["Move"]))
         self.move_update["Update"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
@@ -705,8 +693,114 @@ class App:
         self.create_pokemon_carateristic(self.pokemon_evolution_contribute_dict, self.frame_dict["ContribPokemonEvolution"], PokemonCaracteristic.EVOLUTION)
         self.create_pokemon_carateristic(self.pokemon_ability_contribute_dict, self.frame_dict["ContribPokemonAbility"], PokemonCaracteristic.ABILITY)
         
+        #%% Research Part
+        
+        self.research_sql_dict = dict()
+        try:
+            im = Image.open("Pictures/research_name.jpg").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.research_sql_dict["Background"] = tk.Label(self.frame_dict["Research"], image=im)
+            self.research_sql_dict["Background"].image = im
+            self.research_sql_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        self.research_sql_dict["Title"] = tk.Label(self.frame_dict["Research"], text="Research your pokemon", font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
+        self.research_sql_dict["Title"].pack(pady=20)
+        
+        self.research_sql_dict["Deconnection"] = tk.Button(self.frame_dict["Research"], text="Return", compound="top", width=15, height=1, bg="#FF6347", command=self.return_back)
+        self.research_sql_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
         
         
+        self.research_sql_dict["ListName"] = tk.Listbox(self.frame_dict["Research"], width=80, height=15)
+        self.research_sql_dict["ListName"].place(relx=0.5, rely=0.3)
+        
+        self.research_sql_dict["Name"] = tk.Entry(self.frame_dict["Research"], width=45, fg="gray")
+        self.research_sql_dict["Name"].place(relx=0.3, rely=0.48, relwidth=0.1, relheight=0.04)
+        self.research_sql_dict["Name"].insert(0, "Enter the name")
+        self.research_sql_dict["Name"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.research_sql_dict["Name"],"Enter the name", False))
+        self.research_sql_dict["Name"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.research_sql_dict["Name"],"Enter the name"))
+        self.research_sql_dict["Name"].bind("<KeyRelease>", lambda event: self.on_key_release(event, self.research_sql_dict["Name"],self.research_sql_dict["ListName"]))
+        
+        self.research_sql_dict["Select"] = deque([])
+        self.research_sql_dict["ListName"].bind("<Double-1>", lambda event: self.on_select_list(event,self.research_sql_dict["Name"], self.research_sql_dict["ListName"]))
+        
+        self.research_sql_dict["Search"] = tk.Button(self.frame_dict["Research"], text="Search", width=20, height=1, bg="lightgreen", command=lambda: self.search_by_name(self.research_sql_dict["Name"], strict=False))
+        self.research_sql_dict["Search"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
+        
+        self.result_sql_dict = dict()
+        
+        try:
+            im = Image.open("Pictures/result_pokemon.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.result_sql_dict["Background"] = tk.Label(self.frame_dict["Results"], image=im)
+            self.result_sql_dict["Background"].image = im
+            self.result_sql_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        
+        try:
+            im = Image.open("Pictures/question_mark.jpg").convert("RGB")
+            im = im.resize((300, 300), Image.Resampling.LANCZOS)
+            
+            im = ImageTk.PhotoImage(im)
+            
+            self.result_sql_dict["PokemonImage"] = tk.Label(self.frame_dict["Results"], image=im)
+            self.result_sql_dict["PokemonImage"].image = im
+            self.result_sql_dict["PokemonImage"].place(relx=0.5, rely=0.5, anchor="center")
+        except:
+            pass
+        
+        self.result_sql_dict["Title"] = tk.Label(self.frame_dict["Results"], text="Your selected pokemon", font=("Arial",36, "bold"), fg="black", bg="lightgrey", borderwidth=2, relief="solid")
+        self.result_sql_dict["Title"].pack(pady=20)
+        
+        
+        self.poke_ability = ["None"]
+        self.poke_id = 0
+        self.poke_move = ["None"]
+        
+        self.result_sql_dict["Deconnection"] = tk.Button(self.frame_dict["Results"], text="Return", compound="top", width=15, height=1, bg="#FF6347", command=self.return_back)
+        self.result_sql_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
+        self.result_sql_dict["Tier"] = tk.Label(self.frame_dict["Results"], text="Type :")
+        self.result_sql_dict["Tier"].place(relx=0.32, rely=0.8)
+        self.result_sql_dict["Type1"] = tk.Label(self.frame_dict["Results"], text="Type 1 :")
+        self.result_sql_dict["Type1"].place(relx=0.32, rely=0.85)
+        self.result_sql_dict["Type2"] = tk.Label(self.frame_dict["Results"], text="Type 2 :")
+        self.result_sql_dict["Type2"].place(relx=0.32, rely=0.9)
+        self.result_sql_dict["HP"] = tk.Label(self.frame_dict["Results"], text="HP :")
+        self.result_sql_dict["HP"].place(relx=0.48, rely=0.8)
+        self.result_sql_dict["Attack"] = tk.Label(self.frame_dict["Results"], text="Attack :")
+        self.result_sql_dict["Attack"].place(relx=0.48, rely=0.85)
+        self.result_sql_dict["Defense"] = tk.Label(self.frame_dict["Results"], text="Defense :")
+        self.result_sql_dict["Defense"].place(relx=0.48, rely=0.9)
+        self.result_sql_dict["Speed"] = tk.Label(self.frame_dict["Results"], text="Type :")
+        self.result_sql_dict["Speed"].place(relx=0.63, rely=0.8)
+        self.result_sql_dict["AttackSpe"] = tk.Label(self.frame_dict["Results"], text="Attack special :")
+        self.result_sql_dict["AttackSpe"].place(relx=0.63, rely=0.85)
+        self.result_sql_dict["DefenseSpe"] = tk.Label(self.frame_dict["Results"], text="Defense Special :")
+        self.result_sql_dict["DefenseSpe"].place(relx=0.63, rely=0.9)
+        
+        self.result_sql_dict["SelectAbility"] = tk.StringVar(value="Ability")
+        self.result_sql_dict["AbilityDescription"] = tk.Text(self.frame_dict["Results"], font=("Arial", 14), wrap="word", height=10, width=20)
+        self.result_sql_dict["AbilityDescription"].place(relx=0.13, rely=0.33)
+        self.result_sql_dict["Ability"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectAbility"], *self.poke_ability, command=lambda event: self.display_ability_description(event, self.result_sql_dict["Ability"], self.result_sql_dict["AbilityDescription"]))
+        self.result_sql_dict["Ability"].place(relx=0.13, rely=0.85, relwidth=0.1, relheight=0.04)
+        self.result_sql_dict["AbilityDescription"].config(state="disabled")
+        
+        self.result_sql_dict["SelectMove"] = tk.StringVar(value="Move")
+        self.result_sql_dict["MoveDescription"] = tk.Text(self.frame_dict["Results"], font=("Arial", 14), wrap="word", height=10, width=20)
+        self.result_sql_dict["MoveDescription"].place(relx=0.70, rely=0.33)
+        self.result_sql_dict["Move"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectMove"], *self.poke_move, command=lambda event: self.display_move_description(event, self.result_sql_dict["Move"], self.result_sql_dict["MoveDescription"]))
+        self.result_sql_dict["Move"].place(relx=0.78, rely=0.85, relwidth=0.1, relheight=0.04)
+        self.result_sql_dict["MoveDescription"].config(state="disabled")
+        
+        
+    #%% Methods
     def get_image_path(self, label, button):
         path = filedialog.askopenfilename(
             title="Select the design of your pokemon",
@@ -774,7 +868,7 @@ class App:
         frame_dict["Background"].place(relwidth=1, relheight=1)
     
     def creation_account(self):
-        sql = "SELECT id FROM Connections WHERE login=%s"
+        sql = "SELECT id FROM Connections WHERE login=%s LIMIT 1"
         param1 = self.login_dict["LoginNew"].get()
         param2 = self.login_dict["PasswordNew"].get()
         param3 = self.login_dict["PasswordNew2"].get()
@@ -805,7 +899,7 @@ class App:
         self.login_dict["PasswordNew2"].config(fg="gray", show="")
     
     def connection(self):
-        sql = "SELECT id FROM Connections WHERE login=%s AND password=%s"
+        sql = "SELECT id FROM Connections WHERE login=%s AND password=%s LIMIT 1"
         param1 = self.login_dict["Login"].get()
         param2 = self.login_dict["Password"].get()
         if param1 and param2:
@@ -958,8 +1052,8 @@ class App:
         params = (self.id,)
         self.mycursor.execute(sql, params)
         tiers = self.mycursor.fetchall()
-       
-        return list(tiers)
+        tiers = list(tiers)
+        return [t[0] for t in tiers]
     
     def create_binary(self, env, frame, name, table_name, description=False):
         sentence = "Enter the " + name.lower() + " name"
@@ -1176,7 +1270,7 @@ class App:
         self.update_button()
         
     def create_move(self):
-        sql = "INSERT INTO Moves (name,type,category,power,pp,priority,description,id_login) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO Moves (name,type,category,power,pp,accuracy,description,id_login) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         name = self.move_add["Name"].get()
         type1 = self.move_add["Type"].cget("text")
         category =  self.move_add["Category"].cget("text")
@@ -1229,20 +1323,22 @@ class App:
         self.move_add["PP"].config(fg="gray")
         
         self.move_add["Priority"].delete(0, tk.END)
-        self.move_add["Priority"].insert(0, "Enter the priority")
+        self.move_add["Priority"].insert(0, "Enter the accuracy")
         self.move_add["Priority"].config(fg="gray")
         
         self.move_add["Description"].delete(0, tk.END)
         self.move_add["Description"].insert(0, "Enter a description")
         self.move_add["Description"].config(fg="gray")
         
+        self.move_add["SelectType"].set(value="Type")
         self.move_add["Type"].destroy()
-        self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_add["TypeLabel"].config(text=x))
-        self.move_add["Type"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"])
+        self.move_add["Type"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
         
+        self.move_add["SelectCategory"].set(value="Category")
         self.move_add["Category"].destroy()
-        self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_add["CategoryLabel"].config(text=x))
-        self.move_add["Category"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"])
+        self.move_add["Category"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)
         
         self.update_button()
     
@@ -1263,12 +1359,12 @@ class App:
             else:
                 self.move_delete["Delete"].config(text="Wrong move")
         self.move_delete["Move"].destroy()
-        self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"], command=lambda x: self.move_delete["MoveLabel"].config(text=x))
+        self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"])
         self.move_delete["Move"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         self.update_button()
         
     def update_move(self, origin):
-        sql = "UPDATE Moves SET name=%s,type=%s,category=%s,power=%s,pp=%s,priority=%s,description=%s  WHERE name=%s"
+        sql = "UPDATE Moves SET name=%s,type=%s,category=%s,power=%s,pp=%s,accuracy=%s,description=%s  WHERE name=%s"
         name = self.move_update["Name"].get()
         type1 = self.move_update["Type"].cget("text")
         
@@ -1325,20 +1421,22 @@ class App:
         self.move_update["PP"].config(fg="gray")
         
         self.move_update["Priority"].delete(0, tk.END)
-        self.move_update["Priority"].insert(0, "Enter the priority")
+        self.move_update["Priority"].insert(0, "Enter the accuracy")
         self.move_update["Priority"].config(fg="gray")
         
         self.move_update["Description"].delete(0, tk.END)
         self.move_update["Description"].insert(0, "Enter a description")
         self.move_update["Description"].config(fg="gray")
         
+        self.move_update["SelectType"].set(value="Type")
+        self.move_update["SelectCategory"].set(value="Category")
         self.move_update["Category"].destroy()
-        self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_update["CategoryLabel"].config(text=x))
-        self.move_update["Category"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"])
+        self.move_update["Category"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)
         
         self.move_update["Type"].destroy()
-        self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_update["TypeLabel"].config(text=x))
-        self.move_update["Type"].place(relx=0.4, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"])
+        self.move_update["Type"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
         self.update_button()   
         
     def change_frame_move(self):
@@ -1349,13 +1447,13 @@ class App:
         if self.mode == Mode.ADD:
         
             self.move_add["Name"].place(relx=0.15, rely=0.33, relwidth=0.1, relheight=0.04)        
-            self.move_add["TypeLabel"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
+            
             self.move_add["Type"].destroy()
-            self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_add["TypeLabel"].config(text=x))
+            self.move_add["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectType"], *self.type_contribute_dict["Select"])
             self.move_add["Type"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)  
-            self.move_add["CategoryLabel"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
+            
             self.move_add["Category"].destroy()
-            self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_add["CategoryLabel"].config(text=x))
+            self.move_add["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_add["SelectCategory"], *self.category_contribute_dict["Select"])
             self.move_add["Category"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
             self.move_add["Power"].place(relx=0.75, rely=0.33, relwidth=0.1, relheight=0.04)         
             self.move_add["PP"].place(relx=0.2, rely=0.66, relwidth=0.1, relheight=0.04) 
@@ -1370,7 +1468,7 @@ class App:
                     self.move_update[key].place_forget()
         elif self.mode == Mode.DELETE:
             self.move_delete["Move"].destroy()
-            self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"], command=lambda x: self.move_delete["MoveLabel"].config(text=x))
+            self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"])
             self.move_delete["Move"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
             self.move_delete["Delete"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
 
@@ -1382,13 +1480,13 @@ class App:
                     self.move_update[key].place_forget()
         elif self.mode == Mode.UPDATE:
             self.move_update["Name"].place(relx=0.15, rely=0.33, relwidth=0.1, relheight=0.04)        
-            self.move_update["TypeLabel"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
+            
             self.move_update["Type"].destroy()
-            self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"], command=lambda x: self.move_update["TypeLabel"].config(text=x))
+            self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"])
             self.move_update["Type"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)  
-            self.move_update["CategoryLabel"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
+            
             self.move_update["Category"].destroy()
-            self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"], command=lambda x: self.move_update["CategoryLabel"].config(text=x))
+            self.move_update["Category"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectCategory"], *self.category_contribute_dict["Select"])
             self.move_update["Category"].place(relx=0.55, rely=0.33, relwidth=0.1, relheight=0.04)     
             self.move_update["Power"].place(relx=0.75, rely=0.33, relwidth=0.1, relheight=0.04)         
             self.move_update["PP"].place(relx=0.2, rely=0.66, relwidth=0.1, relheight=0.04) 
@@ -1396,7 +1494,7 @@ class App:
             self.move_update["Description"].place(relx=0.7, rely=0.66, relwidth=0.1, relheight=0.04)
             self.move_update["Update"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
             self.move_delete["Move"].destroy()
-            self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"], command=lambda x: self.move_delete["MoveLabel"].config(text=x))
+            self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"])
             self.move_delete["Move"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
             self.move_delete["Delete"].place_forget()
             for key in self.move_add.keys():
@@ -1413,35 +1511,35 @@ class App:
         self.pokemon_update["Speed"].config(fg="gray")
         
         self.pokemon_update["Type1"].destroy()
-        self.pokemon_update["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType1"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_update["Type1Label"].config(text=x))
+        self.pokemon_update["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType1"], *self.type_contribute_dict["Select"])
         self.pokemon_update["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update["Type2"].destroy()
-        self.pokemon_update["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType2"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_update["Type2Label"].config(text=x))
+        self.pokemon_update["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType2"], *self.type_contribute_dict["Select"])
         self.pokemon_update["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update["Tier"].destroy()
-        self.pokemon_update["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectTier"], *self.tier_contribute_dict["Select"], command=lambda x: self.pokemon_update["TierLabel"].config(text=x))
+        self.pokemon_update["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectTier"], *self.tier_contribute_dict["Select"])
         self.pokemon_update["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update["Choose"].destroy()
-        self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_update["ChooseLabel"].config(text=x))
+        self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"])
         self.pokemon_update["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.pokemon_delete["Choose"].destroy()
-        self.pokemon_delete["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_delete["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_delete["ChooseLabel"].config(text=x))
+        self.pokemon_delete["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_delete["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"])
         self.pokemon_delete["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.pokemon_add["Type1"].destroy()
-        self.pokemon_add["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType1"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_add["Type1Label"].config(text=x))
+        self.pokemon_add["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType1"], *self.type_contribute_dict["Select"])
         self.pokemon_add["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
         
         self.pokemon_add["Type2"].destroy()
-        self.pokemon_add["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType2"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_add["Type2Label"].config(text=x))
+        self.pokemon_add["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType2"], *self.type_contribute_dict["Select"])
         self.pokemon_add["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.pokemon_add["Tier"].destroy()
-        self.pokemon_add["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectTier"], *self.tier_contribute_dict["Select"], command=lambda x: self.pokemon_add["TierLabel"].config(text=x))
+        self.pokemon_add["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectTier"], *self.tier_contribute_dict["Select"])
         self.pokemon_add["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
         
         if self.mode == Mode.ADD:
@@ -1451,19 +1549,19 @@ class App:
            
             self.pokemon_add["Name"].place(relx=0.1, rely=0.5, relwidth=0.1, relheight=0.04)
             
-            self.pokemon_add["ImageLabel"].place(relx=0.1, rely=0.8, relwidth=0.1, relheight=0.04)
+            
             
             self.pokemon_add["Image"].place(relx=0.1, rely=0.8, relwidth=0.1, relheight=0.04)
 
-            self.pokemon_add["Type1Label"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
+           
            
             self.pokemon_add["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
          
-            self.pokemon_add["Type2Label"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
+          
         
             self.pokemon_add["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
 
-            self.pokemon_add["TierLabel"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
+            
             
             self.pokemon_add["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
             
@@ -1500,7 +1598,7 @@ class App:
         elif self.mode == Mode.UPDATE:
             
             
-            self.pokemon_update["ChooseLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
+            
            
             self.pokemon_update["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
             
@@ -1511,7 +1609,7 @@ class App:
             self.pokemon_update["Name"].place(relx=0.1, rely=0.5, relwidth=0.1, relheight=0.04)
            
             
-            self.pokemon_update["ImageLabel"].place(relx=0.1, rely=0.8, relwidth=0.1, relheight=0.04)
+          
           
             self.pokemon_update["Image"].place(relx=0.1, rely=0.8, relwidth=0.1, relheight=0.04)
             
@@ -1520,18 +1618,17 @@ class App:
             
             
             
-            self.pokemon_update["Type1Label"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
+            
             
             self.pokemon_update["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
             
           
-            self.pokemon_update["Type2Label"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
-           
+            
             self.pokemon_update["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
             
 
            
-            self.pokemon_update["TierLabel"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
+            
             
             self.pokemon_update["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
             
@@ -1648,15 +1745,15 @@ class App:
         self.update_button()
                 
         self.pokemon_add["Type1"].destroy()
-        self.pokemon_add["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType1"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_add["Type1Label"].config(text=x))
+        self.pokemon_add["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType1"], *self.type_contribute_dict["Select"])
         self.pokemon_add["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
         
         self.pokemon_add["Type2"].destroy()
-        self.pokemon_add["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType2"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_add["Type2Label"].config(text=x))
+        self.pokemon_add["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectType2"], *self.type_contribute_dict["Select"])
         self.pokemon_add["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.pokemon_add["Tier"].destroy()
-        self.pokemon_add["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectTier"], *self.tier_contribute_dict["Select"], command=lambda x: self.pokemon_add["TierLabel"].config(text=x))
+        self.pokemon_add["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectTier"], *self.tier_contribute_dict["Select"])
         self.pokemon_add["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
         
         
@@ -1674,7 +1771,7 @@ class App:
         self.update_button()
         
         self.pokemon_delete["Choose"].destroy()
-        self.pokemon_delete["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_delete["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_delete["ChooseLabel"].config(text=x))
+        self.pokemon_delete["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_delete["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"])
         self.pokemon_delete["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         
          
@@ -1767,19 +1864,19 @@ class App:
         self.update_button()
         
         self.pokemon_update["Type1"].destroy()
-        self.pokemon_update["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType1"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_update["Type1Label"].config(text=x))
+        self.pokemon_update["Type1"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType1"], *self.type_contribute_dict["Select"])
         self.pokemon_update["Type1"].place(relx=0.3, rely=0.2, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update["Type2"].destroy()
-        self.pokemon_update["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType2"], *self.type_contribute_dict["Select"], command=lambda x: self.pokemon_update["Type2Label"].config(text=x))
+        self.pokemon_update["Type2"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectType2"], *self.type_contribute_dict["Select"])
         self.pokemon_update["Type2"].place(relx=0.3, rely=0.5, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update["Tier"].destroy()
-        self.pokemon_update["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectTier"], *self.tier_contribute_dict["Select"], command=lambda x: self.pokemon_update["TierLabel"].config(text=x))
+        self.pokemon_update["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectTier"], *self.tier_contribute_dict["Select"])
         self.pokemon_update["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
         
         self.pokemon_update["Choose"].destroy()
-        self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"], command=lambda x: self.pokemon_update["ChooseLabel"].config(text=x))
+        self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"])
         self.pokemon_update["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
      
         
@@ -1808,6 +1905,7 @@ class App:
             self.mycursor.execute(sql, param)
             l = self.mycursor.fetchall()
             l = list(l)
+            l = [v[0] for v in l]
         elif caracteristic == PokemonCaracteristic.EVOLUTION:
             if self.mode == Mode.ADD:
                 s = "(id_login= 1 OR id_login=%s)"
@@ -1833,6 +1931,7 @@ class App:
             self.mycursor.execute(sql, param)
             l = self.mycursor.fetchall()
             l = list(l)
+            l = [v[0] for v in l]
         elif caracteristic == PokemonCaracteristic.MOVE:
             if self.mode == Mode.ADD:
                 s = "(id_login= 1 OR id_login=%s)"
@@ -1855,6 +1954,7 @@ class App:
             self.mycursor.execute(sql, param)
             l = self.mycursor.fetchall()
             l = list(l)
+            l = [v[0] for v in l]
         else:
             l = []
         
@@ -1938,16 +2038,17 @@ class App:
                 sql = "INSERT INTO " + t + " (" + v1 + "," + v2 + ",id_login) VALUES (%s,%s,%s)"
                 p1 = env["Choose"].cget("text")
                 p2 = env["Choose2"].cget("text")
-                sql1 = "SELECT id FROM Pokemons WHERE name=%s"
+                sql1 = "SELECT id FROM Pokemons WHERE name=%s LIMIT 1"
                 self.mycursor.execute(sql1, (p1,))
                 p1 = self.mycursor.fetchall()
-                sql2 = "SELECT id FROM " + t2 +" WHERE name=%s"
+                sql2 = "SELECT id FROM " + t2 +" WHERE name=%s LIMIT 1"
                 self.mycursor.execute(sql2, (p2,))
                 p2 = self.mycursor.fetchall()
                 if len(p1) > 0 and len(p2) > 0:
                     p1 = p1[0][0]
                     p2 = p2[0][0]
                     params = (p1, p2, self.id)
+                    
                     self.mycursor.execute(sql, params)
                     self.mydb.commit()
                     env["Apply"].config(text="Creation success")
@@ -1977,14 +2078,14 @@ class App:
                         t = ""
                         v1 = ""
                         v2 = ""
-                sql = "UPDATE " + t + "SET " + v2 + "=%s WHERE " + v1 + "=%s AND " + v2 +"=%s AND id_login=%s"
+                sql = "UPDATE " + t + " SET " + v2 + "=%s WHERE " + v1 + "=%s AND " + v2 +"=%s AND id_login=%s"
                 p1 = env["Choose"].cget("text")
                 p2 = env["Choose2"].cget("text")
                 p3 = env["Choose3"].cget("text")
-                sql1 = "SELECT id FROM Pokemons WHERE name=%s"
+                sql1 = "SELECT id FROM Pokemons WHERE name=%s LIMIT 1"
                 self.mycursor.execute(sql1, (p1,))
                 p1 = self.mycursor.fetchall()
-                sql2 = "SELECT id FROM " + t2 + " WHERE name=%s"
+                sql2 = "SELECT id FROM " + t2 + " WHERE name=%s LIMIT 1"
                 self.mycursor.execute(sql2, (p2,))
                 p2 = self.mycursor.fetchall()
                 self.mycursor.execute(sql2, (p3,))
@@ -2018,21 +2119,23 @@ class App:
                         v2 = "id_move"
                     case _:
                         t = ""
+                        t2 = ""
                         v1 = ""
                         v2 = ""
-                sql = "DELETE FROM " + t + "WHERE " + v1 + "=%s AND " + v2 + "=%s AND id_login=%s"
+                sql = "DELETE FROM " + t + " WHERE " + v1 + "=%s AND " + v2 + "=%s AND id_login=%s"
                 p1 = env["Choose"].cget("text")
                 p2 = env["Choose2"].cget("text")
-                sql1 = "SELECT id FROM Pokemons WHERE name=%s"
+                sql1 = "SELECT id FROM Pokemons WHERE name=%s LIMIT 1"
                 self.mycursor.execute(sql1, (p1,))
                 p1 = self.mycursor.fetchall()
-                sql2 = "SELECT id FROM " + t2 + " WHERE name=%s"
+                sql2 = "SELECT id FROM " + t2 + " WHERE name=%s LIMIT 1"
                 self.mycursor.execute(sql2, (p2,))
                 p2 = self.mycursor.fetchall()
                 if len(p1) > 0 and len(p2) > 0:
                     p1 = p1[0][0]
                     p2 = p2[0][0]
                     params = (p1, p2, self.id)
+                    
                     self.mycursor.execute(sql, params)
                     self.mydb.commit()
                     env["Apply"].config(text="Delete success")
@@ -2042,6 +2145,194 @@ class App:
                 pass
         self.update_button()
         
+        
+    def on_key_release(self, event, entry, list_entry):
+        self.search_database(entry.get(), list_entry)
+        
+    def search_database(self, text, list_entry):
+        list_entry.delete(0, tk.END)
+        if text != "Enter the name":
+            sql = "SELECT name FROM Pokemons WHERE LOWER(name) LIKE %s ORDER BY LOWER(name)"
+            self.mycursor.execute(sql, (text.lower() +"%",))
+            l = self.mycursor.fetchall()
+            for val in l:
+                list_entry.insert(tk.END, val[0])
+    
+            
+    def on_select_list(self, event, entry, l):
+        entry.delete(0, tk.END)
+        text = l.get(l.curselection())
+        entry.insert(0, text)
+        self.search_by_name(entry)
+        
+    def search_by_name(self, entry, strict=True):
+        text = entry.get()
+        if strict:
+            sql = "SELECT id FROM Pokemons WHERE name=%s AND (id_login=1 OR id_login=%s)"
+        else:
+            sql = "SELECT id FROM Pokemons WHERE name LIKE %s AND (id_login=1 OR id_login=%s)"
+            text += "%"
+        params = (text, self.id)
+        self.mycursor.execute(sql, params)
+        l = list(self.mycursor.fetchall())
+        self.research_sql_dict["Select"] = deque([val[0] for val in l])
+        self.update_reseach()
+        self.change_frame(self.frame_dict["Research"], self.frame_dict["Results"])
+    
+    def update_reseach(self):
+        if len(self.research_sql_dict["Select"]) == 0:
+            try:
+                im = Image.open("Pictures/question_mark.jpg").convert("RGB")
+                im = im.resize((300, 300), Image.Resampling.LANCZOS)
+                im = ImageTk.PhotoImage(im)
+                self.result_sql_dict["PokemonImage"].config(image=im)
+                self.result_sql_dict["PokemonImage"].image = im
+            except:
+                pass
+            self.result_sql_dict["Title"].config(text="Unknown pokemon")
+            self.result_sql_dict["Type1"].config(text="Type : " + "unknown")
+            self.result_sql_dict["Type2"].place_forget()
+            self.result_sql_dict["Tier"].config(text="Tier : unknown")
+            self.result_sql_dict["HP"].config(text="HP : unknown")
+            self.result_sql_dict["Speed"].config(text="Speed : unknown")
+            self.result_sql_dict["Attack"].config(text="Attack : unknown")
+            self.result_sql_dict["AttackSpe"].config(text="Attack special : unknown")
+            self.result_sql_dict["Defense"].config(text="Defense : unknown")
+            self.result_sql_dict["DefenseSpe"].config(text="Defense special : unknown")
+            self.poke_id = 0
+            self.poke_ability = ["None"]
+            self.poke_move = ["None"]
+        else:
+            id_poke = self.research_sql_dict["Select"][0]
+            sql = "SELECT * FROM Pokemons WHERE id=%s"
+            self.mycursor.execute(sql, (id_poke,))
+            poke = self.mycursor.fetchall()
+            (id1, nid, name, type1, type2, hp, atk, defense, sp_atk, sp_def, speed, tier, image, id_login) = poke[0]
+            self.poke_id = id1
+            try:
+                im = Image.open(image).convert("RGB")
+                im = im.resize((300, 300), Image.Resampling.LANCZOS)
+                im = ImageTk.PhotoImage(im)
+                self.result_sql_dict["PokemonImage"].config(image=im)
+                self.result_sql_dict["PokemonImage"].image = im
+            except:
+                try:
+                    im = Image.open("Pictures/question_mark.jpg").convert("RGB")
+                    im = im.resize((300, 300), Image.Resampling.LANCZOS)
+                    im = ImageTk.PhotoImage(im)
+                    self.result_sql_dict["PokemonImage"].config(image=im)
+                    self.result_sql_dict["PokemonImage"].image = im
+                except:
+                    pass
+            self.result_sql_dict["Title"].config(text=name)
+            sql_type = "SELECT name FROM Types WHERE id=%s"
+            self.mycursor.execute(sql_type, (type1,))
+            type1 = self.mycursor.fetchall()
+            if len(type1) > 0:
+                self.mycursor.execute(sql_type, (type2,))
+                type2 = self.mycursor.fetchall()
+                if len(type2) > 0:
+                    self.result_sql_dict["Type1"].config(text="Type 1 : " + type1[0][0])
+                    self.result_sql_dict["Type2"].config(text="Type 2 : " + type2[0][0])
+                    self.result_sql_dict["Type2"].place(relx=0.32, rely=0.9)
+                else:
+                    self.result_sql_dict["Type1"].config(text="Type : " + type1[0][0])
+                    self.result_sql_dict["Type2"].place_forget()
+            else:
+                self.result_sql_dict["Type1"].config(text="Type : " + "unknown")
+                self.result_sql_dict["Type2"].place_forget()
+            sql_tier = "SELECT name FROM Tiers WHERE id=%s"
+            self.mycursor.execute(sql_tier, (tier,))
+            tier = self.mycursor.fetchall()
+            if len(tier) > 0:
+                self.result_sql_dict["Tier"].config(text="Tier : " + tier[0][0])
+            else:
+                self.result_sql_dict["Tier"].config(text="Tier : unknown")
+            self.result_sql_dict["HP"].config(text="HP : " + str(hp))
+            self.result_sql_dict["Speed"].config(text="Speed : " + str(speed))
+            self.result_sql_dict["Attack"].config(text="Attack : " + str(atk))
+            self.result_sql_dict["AttackSpe"].config(text="Attack special : " + str(sp_atk))
+            self.result_sql_dict["Defense"].config(text="Defense : " + str(defense))
+            self.result_sql_dict["DefenseSpe"].config(text="Defense special : " + str(sp_def))
+            sql_ab = "SELECT A.name FROM PokemonAbilities AS PA JOIN Pokemons AS P ON P.id=PA.id_pokemon JOIN Abilities AS A ON A.id=PA.id_ability WHERE P.id=%s AND (PA.id_login=1 OR PA.id_login=%s) ORDER BY A.name"
+            self.mycursor.execute(sql_ab, (self.poke_id, self.id))
+            ab = self.mycursor.fetchall()
+            self.poke_ability = [val[0] for val in ab]
+            if len(self.poke_ability) == 0:
+                self.poke_ability.append("None")
+            sql_move = "SELECT M.name FROM PokemonMoves AS MP JOIN Pokemons AS P ON P.id=MP.id_pokemon JOIN Moves AS M ON M.id=MP.id_move WHERE P.id=%s AND (MP.id_login=1 OR MP.id_login=%s) ORDER BY M.name"
+            self.mycursor.execute(sql_move, (self.poke_id, self.id))
+            move = self.mycursor.fetchall()
+            self.poke_move = [val[0] for val in move]
+            if len(self.poke_move) == 0:   
+                self.poke_move.append(["None"])
+        self.result_sql_dict["AbilityDescription"].config(state="normal")
+        self.result_sql_dict["AbilityDescription"].delete("1.0", tk.END)
+        self.result_sql_dict["AbilityDescription"].config(state="disable")
+        self.result_sql_dict["SelectAbility"].set(value="Ability")
+        self.result_sql_dict["Ability"].destroy()
+        self.result_sql_dict["Ability"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectAbility"], *self.poke_ability, command=lambda event: self.display_ability_description(event, self.result_sql_dict["Ability"], self.result_sql_dict["AbilityDescription"]))
+        self.result_sql_dict["Ability"].place(relx=0.13, rely=0.85, relwidth=0.1, relheight=0.04)
+        self.result_sql_dict["MoveDescription"].config(state="normal")
+        self.result_sql_dict["MoveDescription"].delete("1.0", tk.END)
+        self.result_sql_dict["SelectMove"].set(value="Move")
+        self.result_sql_dict["Move"].destroy()
+        self.result_sql_dict["Move"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectMove"], *self.poke_move, command=lambda event: self.display_move_description(event, self.result_sql_dict["Move"], self.result_sql_dict["MoveDescription"]))
+        self.result_sql_dict["Move"].place(relx=0.78, rely=0.85, relwidth=0.1, relheight=0.04)
+        self.result_sql_dict["MoveDescription"].config(state="disabled")
+    def display_ability_description(self, event, button, display):
+        display.config(state="normal")
+        entry = button.cget("text")
+        sql = "SELECT description FROM Abilities WHERE name=%s"
+        self.mycursor.execute(sql, (entry,))
+        l = self.mycursor.fetchall()
+        display.delete("1.0", tk.END)
+       
+        if len(l) > 0:
+            display.insert(tk.END, l[0][0])
+        else:
+            display.insert(tk.END, "No description")
+        display.config(state="disabled")
+    
+    def display_move_description(self, event, button, display):
+        display.config(state="normal")
+        entry = button.cget("text")
+        sql = "SELECT * FROM Moves WHERE name=%s"
+        self.mycursor.execute(sql, (entry,))
+        l = self.mycursor.fetchall()
+        display.delete("1.0", tk.END)
+       
+        if len(l) > 0:
+            (id1, name, type1, category, power, pp, accuracy, description, id_login) = l[0]
+            sql_type = "SELECT name FROM Types WHERE id=%s"
+            sql_cat = "SELECT name FROM Categories WHERE id=%s"
+            text = ""
+            self.mycursor.execute(sql_type, (type1,))
+            type1 = self.mycursor.fetchall()
+            if len(type1) > 0:
+                text += "Type : " + type1[0][0] + "\n"
+            else:
+                text += "Type : unknown\n"
+            self.mycursor.execute(sql_cat, (category,))
+            category = self.mycursor.fetchall()
+            if len(category) > 0:
+                text += "Category : " + category[0][0] + "\n"
+            else:
+                text += "Category : unknown\n"
+            text += "Power : " + str(power) + "\n"
+            text += "PP : " + str(pp) + "\n"
+            if accuracy == 0:
+                text += "Accuracy : _ \n"
+            else:
+                text += "Accuracy : " + str(accuracy)+"%\n\n"
+            if description == "":
+                text += "No description"
+            else:
+                text += description
+            display.insert(tk.END, text)
+        else:
+            display.insert(tk.END, "No description")
+        display.config(state="disabled")
     def mainloop(self):
         self.change_frame(None, self.frame_dict["Login"])
         self.root.mainloop()
