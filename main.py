@@ -9,10 +9,18 @@ Created on Wed Mar 26 12:00:02 2025
 import mysql.connector
 from dbcredentials import db
 import tkinter as tk
+import pygame
+import json
+import os
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+import tensorflow as tf
+import numpy as np
+from tensorflow.keras.preprocessing import image
 from enum import Enum
 from PIL import Image, ImageTk
 from tkinter import filedialog
 from collections import deque
+
 #%% [2] OOP
 
 class Mode(Enum):
@@ -46,6 +54,9 @@ class App:
         self.container = tk.Frame(self.root)
         self.container.pack(fill="both", expand=True)
         self.last_frame = deque()
+        pygame.mixer.init()
+        pygame.mixer.music.load("Sound/music.mp3")
+        pygame.mixer.music.play(loops=-1)
         self.frame_dict = dict()
         self.frame_dict["Login"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["Choose"] = tk.Frame(self.container, bg="lightgreen")
@@ -63,7 +74,8 @@ class App:
         self.frame_dict["ContribType"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["ContribTiers"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["Results"] = tk.Frame(self.container, bg="lightblue")
-        
+        self.frame_dict["SearchImage"] = tk.Frame(self.container, bg="lightblue")
+        self.frame_dict["SearchSelection"] = tk.Frame(self.container, bg="lightblue")
         for frame in self.frame_dict.values():
             frame.place(relwidth=1, relheight=1)
             
@@ -107,7 +119,8 @@ class App:
         self.login_dict["Password"].insert(0, "Enter your password")
         self.login_dict["Password"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.login_dict["Password"],"Enter your password", True))
         self.login_dict["Password"].bind("<FocusOut>", lambda event: self.clear_entry(event, self.login_dict["Password"],"Enter your password"))
-        
+        self.login_dict["Password"].bind("<Return>", lambda event: self.connection())
+
         self.login_dict["LoginNew"] = tk.Entry(self.frame_dict["Login"], width=35, fg="gray")
         self.login_dict["LoginNew"].place(relx=0.17, rely=0.6, relwidth=0.1, relheight=0.04)
         self.login_dict["LoginNew"].insert(0, "Enter your login")
@@ -146,7 +159,7 @@ class App:
         self.choose_dict["Title"] = tk.Label(self.frame_dict["Choose"], text="Choose your mode", font=("Arial",36, "bold"), fg="black", bg="lightgreen", borderwidth=2, relief="solid")
         self.choose_dict["Title"].pack(pady=20)
 
-        self.choose_dict["Research"] = tk.Button(self.frame_dict["Choose"], text="Research", compound="top", width=20, height=1, bg="lightblue", command= lambda: self.change_frame(self.frame_dict["Choose"], self.frame_dict["Research"]))
+        self.choose_dict["Research"] = tk.Button(self.frame_dict["Choose"], text="Research", compound="top", width=20, height=1, bg="lightblue", command= lambda: self.change_frame(self.frame_dict["Choose"], self.frame_dict["SearchSelection"]))
         self.choose_dict["Research"].place(relx=0.75, rely=0.9, anchor="center")
         self.choose_dict["Contribute"] = tk.Button(self.frame_dict["Choose"], text="Contribution", compound="top", width=20, height=1, bg="#ffa500", command= lambda: self.change_frame(self.frame_dict["Choose"], self.frame_dict["Contribution"]))
         self.choose_dict["Contribute"].place(relx=0.25, rely=0.9, anchor="center")
@@ -573,13 +586,13 @@ class App:
         self.move_add["Priority"].place(relx=0.5, rely=0.66, relwidth=0.1, relheight=0.04)
         self.move_add["Priority"].insert(0, "Enter the accuracy")
         self.move_add["Priority"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.move_add["Priority"],"Enter the accuracy", False))
-        self.move_add["Priority"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Priority"],"Enter the accuracy"))
+        self.move_add["Priority"].bind("<FocusOut>", lambda event: self.clear_entry(event, self.move_add["Priority"],"Enter the accuracy"))
         
         self.move_add["Description"] = tk.Entry(self.frame_dict["ContribMove"], width=35, fg="gray")
         self.move_add["Description"].place(relx=0.75, rely=0.66, relwidth=0.1, relheight=0.04)
         self.move_add["Description"].insert(0, "Enter a description")
         self.move_add["Description"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.move_add["Description"],"Enter a description", False))
-        self.move_add["Description"].bind("<FocusOut>",  lambda event: self.clear_entry(event, self.move_add["Description"],"Enter a description"))
+        self.move_add["Description"].bind("<FocusOut>", lambda event: self.clear_entry(event, self.move_add["Description"],"Enter a description"))
         
         self.move_add["Create"] = tk.Button(self.frame_dict["ContribMove"], text="Create", width=20, height=1, bg="lightgreen", command=self.create_move)
         self.move_add["Create"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
@@ -763,6 +776,9 @@ class App:
         self.poke_ability = ["None"]
         self.poke_id = 0
         self.poke_move = ["None"]
+        self.research_sql_dict["PreEvolution"] = ["None"]
+        self.research_sql_dict["Evolution"] = ["None"]
+        
         
         self.result_sql_dict["Deconnection"] = tk.Button(self.frame_dict["Results"], text="Return", compound="top", width=15, height=1, bg="#FF6347", command=self.return_back)
         self.result_sql_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
@@ -799,7 +815,91 @@ class App:
         self.result_sql_dict["Move"].place(relx=0.78, rely=0.85, relwidth=0.1, relheight=0.04)
         self.result_sql_dict["MoveDescription"].config(state="disabled")
         
+        self.result_sql_dict["NextImage"] = ImageTk.PhotoImage(Image.open("Pictures/right_arrow.png").resize((50, 50), Image.Resampling.LANCZOS))
+        self.result_sql_dict["Next"] = tk.Button(self.frame_dict["Results"], text="Next pokemon", width=20, height=5, image=self.result_sql_dict["NextImage"], compound="bottom", command=lambda: self.change_pokemon(True))
+        self.result_sql_dict["Next"].place(relx=0.95, rely=0.33)
         
+        self.result_sql_dict["PreviousImage"] = ImageTk.PhotoImage(Image.open("Pictures/left_arrow.png").resize((50, 50), Image.Resampling.LANCZOS))
+        self.result_sql_dict["Previous"] = tk.Button(self.frame_dict["Results"], text="Previous pokemon", width=20, height=5, image=self.result_sql_dict["PreviousImage"], compound="bottom", command=lambda: self.change_pokemon(False))
+        self.result_sql_dict["Previous"].place(relx=0.05, rely=0.33)
+        
+        self.result_sql_dict["SelectEvolution"] = tk.StringVar(value="Evolution")
+        self.result_sql_dict["ButtonEvolution"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectEvolution"], *self.research_sql_dict["Evolution"], command=lambda event: self.go_to_evolution(self.result_sql_dict["ButtonEvolution"]))
+        self.result_sql_dict["ButtonEvolution"].place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.04)
+        
+        self.result_sql_dict["SelectPreEvolution"] = tk.StringVar(value="Pre-evolution")
+        self.result_sql_dict["ButtonPreEvolution"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectPreEvolution"], *self.research_sql_dict["PreEvolution"], command=lambda event: self.go_to_evolution(self.result_sql_dict["ButtonPreEvolution"]))
+        self.result_sql_dict["ButtonPreEvolution"].place(relx=0.85, rely=0.08, relwidth=0.1, relheight=0.04)
+
+
+        self.image_select_dict = dict()
+        try:
+            im = Image.open("Pictures/ai_image.jpg").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+
+            im = ImageTk.PhotoImage(im)
+
+            self.image_select_dict["Background"] = tk.Label(self.frame_dict["SearchImage"], image=im)
+            self.image_select_dict["Background"].image = im
+            self.image_select_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        self.image_select_dict["Title"] = tk.Label(self.frame_dict["SearchImage"], text="Search by image",
+                                                 font=("Arial", 36, "bold"), fg="black", bg="lightgrey", borderwidth=2,
+                                                 relief="solid")
+        self.image_select_dict["Title"].pack(pady=20)
+        self.image_select_dict["ImageLabel"] = tk.Label(self.frame_dict["SearchImage"], text="Image selection")
+        self.image_select_dict["ImageLabel"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
+        self.image_select_dict["Image"] = tk.Button(self.frame_dict["SearchImage"], text="Image selection", compound="top",
+                                              command=lambda: self.get_image_path(self.image_select_dict["ImageLabel"],
+                                                                                  self.image_select_dict["Image"]))
+        self.image_select_dict["Image"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
+
+        self.image_select_dict["Search"] = tk.Button(self.frame_dict["SearchImage"], text="Search", width=20, height=1,
+                                                     bg="lightgreen",
+                                                     command=lambda: self.recognition_by_image(self.image_select_dict["Image"].cget("text")))
+        self.image_select_dict["Search"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
+
+        self.image_select_dict["Deconnection"] = tk.Button(self.frame_dict["SearchImage"], text="Return",
+                                                               compound="top",
+                                                               width=15, height=1, bg="#FF6347",
+                                                               command=self.return_back)
+        self.image_select_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
+
+        self.search_selection_dict = dict()
+        try:
+            im = Image.open("Pictures/selection_choose.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+
+            im = ImageTk.PhotoImage(im)
+
+            self.search_selection_dict["Background"] = tk.Label(self.frame_dict["SearchSelection"], image=im)
+            self.search_selection_dict["Background"].image = im
+            self.search_selection_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        self.search_selection_dict["Title"] = tk.Label(self.frame_dict["SearchSelection"], text="Search your mode of selection",
+                                                   font=("Arial", 36, "bold"), fg="black", bg="lightgrey",
+                                                   borderwidth=2,
+                                                   relief="solid")
+        self.search_selection_dict["Title"].pack(pady=20)
+
+        self.search_selection_dict["Name"] = tk.Button(self.frame_dict["SearchSelection"], text="Name", compound="top",
+                                                   width=20, height=1, bg="lightblue",
+                                                   command=lambda: self.change_frame(self.frame_dict["SearchSelection"],
+                                                                                     self.frame_dict["Research"]))
+        self.search_selection_dict["Name"].place(relx=0.79, rely=0.62, anchor="center")
+
+        self.search_selection_dict["Image"] = tk.Button(self.frame_dict["SearchSelection"], text="Image", compound="top",
+                                                width=20, height=1, bg="lightgreen",
+                                                command=lambda: self.change_frame(self.frame_dict["SearchSelection"],
+                                                                          self.frame_dict["SearchImage"])
+                                                        )
+        self.search_selection_dict["Image"].place(relx=0.21, rely=0.62, anchor="center")
+
+        self.search_selection_dict["Deconnection"] = tk.Button(self.frame_dict["SearchSelection"], text="Return", compound="top",
+                                                         width=15, height=1, bg="#FF6347", command=self.return_back)
+        self.search_selection_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
     #%% Methods
     def get_image_path(self, label, button):
         path = filedialog.askopenfilename(
@@ -810,7 +910,7 @@ class App:
             button.config(text=path)
         else:
             label.config(text="")
-            
+            button.config(text="Select an image")
     def clear_entry(self, event, entry, text):
         if entry.get() == "":
             entry.delete(0, tk.END)
@@ -1192,9 +1292,11 @@ class App:
                     params = (name, self.id)
                 self.mycursor.execute(sql, params)
                 self.mydb.commit()
-                env["Confirm"].config(text="Creation success")
+                #env["Confirm"].config(text="Creation success")
+                self.play_sound("Sound/good.mp3")
             else:
-                env["Confirm"].config(text="Please enter a name")
+                #env["Confirm"].config(text="Please enter a name")
+                self.play_sound("Sound/not_good.mp3")
             env["Add"].delete(0, tk.END)
             env["Add"].insert(0, sentence)
             env["Add"].config(fg="gray")
@@ -1230,11 +1332,14 @@ class App:
 
                     self.mycursor.execute(sql, params)
                     self.mydb.commit()
-                    env["Confirm"].config(text="Update success")
+                    #env["Confirm"].config(text="Update success")
+                    self.play_sound("Sound/good.mp3")
                 else:
-                    env["Confirm"].config(text="Please select a good " + name.lower())
+                    #env["Confirm"].config(text="Please select a good " + name.lower())
+                    self.play_sound("Sound/not_good.mp3")
             else:
-                env["Confirm"].config(text="Please select a good " + name.lower())
+                #env["Confirm"].config(text="Please select a good " + name.lower())
+                self.play_sound("Sound/not_good.mp3")
             env["Update2"].delete(0, tk.END)
             env["Update2"].insert(0, sentence)
             env["Update2"].config(fg="gray")
@@ -1250,11 +1355,14 @@ class App:
                     
                     self.mycursor.execute(sql, (tier[0][0],))
                     self.mydb.commit()
-                    env["Confirm"].config(text="Delete success")
+                    #env["Confirm"].config(text="Delete success")
+                    self.play_sound("Sound/good.mp3")
                 else:
-                    env["Confirm"].config(text="Please select a good " + name.lower())
+                    #env["Confirm"].config(text="Please select a good " + name.lower())
+                    self.play_sound("Sound/not_good.mp3")
             else:
-                env["Confirm"].config(text="Please select a good " + name.lower())
+                #env["Confirm"].config(text="Please select a good " + name.lower())
+                self.play_sound("Sound/not_good.mp3")
             
         else:
             pass
@@ -1290,7 +1398,8 @@ class App:
                 if description == "" or description == 'Enter a description':
                     description = ""
                 if power < 0 or pp <= 0:
-                    self.move_add["Create"].config(text="Power or PP issue")
+                    #self.move_add["Create"].config(text="Power or PP issue")
+                    self.play_sound("Sound/not_good.mp3")
                 else:
                     
                     sql_type = "SELECT id FROM Types WHERE name=%s LIMIT 1"
@@ -1306,9 +1415,11 @@ class App:
                         self.mycursor.execute(sql, params)
                         self.mydb.commit()
                         
-                        self.move_add["Create"].config(text="Creation success")
+                        #self.move_add["Create"].config(text="Creation success")
+                        self.play_sound("Sound/good.mp3")
             except:
-                self.move_add["Create"].config(text="Value issue")
+                #self.move_add["Create"].config(text="Value issue")
+                self.play_sound("Sound/not_good.mp3")
                 
         self.move_add["Name"].delete(0, tk.END)
         self.move_add["Name"].insert(0, "Enter a name")
@@ -1347,7 +1458,8 @@ class App:
         
         name = self.move_delete["Move"].cget("text")
         if name == "None":
-            self.move_delete["Delete"].config(text="Wrong move")
+            #self.move_delete["Delete"].config(text="Wrong move")
+            self.play_sound("Sound/not_good.mp3")
         else:
             sql_id = "SELECT id FROM Moves WHERE name=%s LIMIT 1"
             self.mycursor.execute(sql_id, (name,))
@@ -1355,9 +1467,11 @@ class App:
             if len(id1) > 0:
                 self.mycursor.execute(sql, (id1[0][0],))
                 self.mydb.commit()
-                self.move_delete["Delete"].config(text="Delete success")
+                #self.move_delete["Delete"].config(text="Delete success")
+                self.play_sound("Sound/good.mp3")
             else:
-                self.move_delete["Delete"].config(text="Wrong move")
+                #self.move_delete["Delete"].config(text="Wrong move")
+                self.play_sound("Sound/not_good.mp3")
         self.move_delete["Move"].destroy()
         self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"], *self.move_contribute_dict["SelectUse"])
         self.move_delete["Move"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
@@ -1376,7 +1490,8 @@ class App:
         description = self.move_update["Description"].get()
         
         if type1 == "None" or category == "None":
-            self.move_update["Update"].config(text="Missing values")
+            #self.move_update["Update"].config(text="Missing values")
+            self.play_sound("Sound/not_good.mp3")
         else:
             try:
                 power = int(power)
@@ -1385,7 +1500,8 @@ class App:
                 if description == "" or description == 'Enter a description':
                     description = ""
                 if power < 0 or pp <= 0:
-                    self.move_update["Update"].config(text="Power or PP issue")
+                    #self.move_update["Update"].config(text="Power or PP issue")
+                    self.play_sound("Sound/not_good.mp3")
                 else:
                     sql_type = "SELECT id FROM Types WHERE name=%s LIMIT 1"
                     self.mycursor.execute(sql_type, (type1,))
@@ -1402,11 +1518,14 @@ class App:
                         
                         self.mycursor.execute(sql, params)
                         self.mydb.commit()
-                        self.move_update["Update"].config(text="Update success")
+                        #self.move_update["Update"].config(text="Update success")
+                        self.play_sound("Sound/good.mp3")
                     else:
-                        self.move_update["Update"].config(text="Value issue")
+                        #self.move_update["Update"].config(text="Value issue")
+                        self.play_sound("Sound/not_good.mp3")
             except:
-                self.move_update["Update"].config(text="Value issue")
+                #self.move_update["Update"].config(text="Value issue")
+                self.play_sound("Sound/not_good.mp3")
                 
         self.move_update["Name"].delete(0, tk.END)
         self.move_update["Name"].insert(0, "Enter a name")
@@ -1437,6 +1556,10 @@ class App:
         self.move_update["Type"].destroy()
         self.move_update["Type"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_update["SelectType"], *self.type_contribute_dict["Select"])
         self.move_update["Type"].place(relx=0.35, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.move_delete["Move"].destroy()
+        self.move_delete["Move"] = tk.OptionMenu(self.frame_dict["ContribMove"], self.move_delete["SelectMove"],
+                                                 *self.move_contribute_dict["SelectUse"])
+        self.move_delete["Move"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
         self.update_button()   
         
     def change_frame_move(self):
@@ -1699,15 +1822,20 @@ class App:
                        
                         self.mycursor.execute(sql, params)
                         self.mydb.commit()
-                        self.pokemon_add["Create"].config(text="Creation success")
+                        #self.pokemon_add["Create"].config(text="Creation success")
+                        self.play_sound("Sound/good.mp3")
                     else:
-                        self.pokemon_add["Create"].config(text="Type or tier error")
+                        #self.pokemon_add["Create"].config(text="Type or tier error")
+                        self.play_sound("Sound/not_good.mp3")
                 else:
-                    self.pokemon_add["Create"].config(text="Value error")
+                    #self.pokemon_add["Create"].config(text="Value error")
+                    self.play_sound("Sound/not_good.mp3")
             except:
-                self.pokemon_add["Create"].config(text="Wrong format value")
+                #self.pokemon_add["Create"].config(text="Wrong format value")
+                self.play_sound("Sound/not_good.mp3")
         else:    
-            self.pokemon_add["Create"].config(text="Type problem")
+            #self.pokemon_add["Create"].config(text="Type problem")
+            self.play_sound("Sound/not_good.mp3")
             
         self.pokemon_add["NID"].delete(0, tk.END)
         self.pokemon_add["NID"].insert(0, "Enter the national id")
@@ -1755,18 +1883,20 @@ class App:
         self.pokemon_add["Tier"].destroy()
         self.pokemon_add["Tier"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_add["SelectTier"], *self.tier_contribute_dict["Select"])
         self.pokemon_add["Tier"].place(relx=0.3, rely=0.8, relwidth=0.1, relheight=0.04)
-        
+        self.pokemon_add["Image"].config(text="Image selection")
         
                 
     def delete_pokemon(self):
-        sql = "DELETE FROM Pokemons WHERE name=%s"
+        sql = "DELETE FROM Pokemons WHERE name=%s AND id_login=%s"
         name = self.pokemon_delete["Choose"].cget("text")
         try:
-            self.mycursor.execute(sql, (name,))
+            self.mycursor.execute(sql, (name,self.id))
             self.mydb.commit()
-            self.pokemon_delete["Delete"].config(text="Delete success")
+            #self.pokemon_delete["Delete"].config(text="Delete success")
+            self.play_sound("Sound/good.mp3")
         except:
-            self.pokemon_delete["Delete"].config(text="Name error")
+            #self.pokemon_delete["Delete"].config(text="Name error")
+            self.play_sound("Sound/not_good.mp3")
             
         self.update_button()
         
@@ -1819,15 +1949,20 @@ class App:
                         
                         self.mycursor.execute(sql, params)
                         self.mydb.commit()
-                        self.pokemon_update["Update"].config(text="Creation success")
+                        #self.pokemon_update["Update"].config(text="Creation success")
+                        self.play_sound("Sound/good.mp3")
                     else:
-                        self.pokemon_update["Update"].config(text="Type or tier error")
+                         #self.pokemon_update["Update"].config(text="Type or tier error")
+                         self.play_sound("Sound/not_good.mp3")
                 else:
-                    self.pokemon_update["Update"].config(text="Value error")
+                    #self.pokemon_update["Update"].config(text="Value error")
+                    self.play_sound("Sound/not_good.mp3")
             except:
-                self.pokemon_update["Update"].config(text="Wrong format value")
+                #self.pokemon_update["Update"].config(text="Wrong format value")
+                self.play_sound("Sound/not_good.mp3")
         else:    
-            self.pokemon_update["Update"].config(text="Type problem")
+            #self.pokemon_update["Update"].config(text="Type problem")
+            self.play_sound("Sound/not_good.mp3")
             
         self.pokemon_update["NID"].delete(0, tk.END)
         self.pokemon_update["NID"].insert(0, "Enter the national id")
@@ -1878,8 +2013,8 @@ class App:
         self.pokemon_update["Choose"].destroy()
         self.pokemon_update["Choose"] = tk.OptionMenu(self.frame_dict["ContribPokemon"], self.pokemon_update["SelectPokemon"], *self.pokemon_contribute_dict["SelectUse"])
         self.pokemon_update["Choose"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
-     
-        
+
+        self.pokemon_update["Image"].config(text="Image selection")
     def update_selection_box(self, env, caracteristic, op=False):
         
         val = env["Choose"].cget("text")
@@ -1902,6 +2037,10 @@ class App:
                 param = (val, self.id,env["Choose2"].cget("text"))
             else:
                 param = (val,self.id)
+            if self.mode == Mode.ADD or op:
+                sql += " ORDER BY name"
+            else:
+                sql += " ORDER BY A.name"
             self.mycursor.execute(sql, param)
             l = self.mycursor.fetchall()
             l = list(l)
@@ -1927,7 +2066,10 @@ class App:
                     param = (val, val, self.id)
                 else:
                     param = (val, self.id)
-           
+            if self.mode == Mode.ADD or op:
+                sql += " ORDER BY name"
+            else:
+                sql += " ORDER BY P2.name"
             self.mycursor.execute(sql, param)
             l = self.mycursor.fetchall()
             l = list(l)
@@ -1951,6 +2093,10 @@ class App:
                     param = (val, self.id, env["Choose2"].cget("text"))
             else:
                 param = (val, self.id)
+            if self.mode == Mode.ADD or op:
+                sql += " ORDER BY name"
+            else:
+                sql += " ORDER BY M.name"
             self.mycursor.execute(sql, param)
             l = self.mycursor.fetchall()
             l = list(l)
@@ -2051,9 +2197,11 @@ class App:
                     
                     self.mycursor.execute(sql, params)
                     self.mydb.commit()
-                    env["Apply"].config(text="Creation success")
+                    #env["Apply"].config(text="Creation success")
+                    self.play_sound("Sound/good.mp3")
                 else:
-                    env["Apply"].config(text="Select all the field")
+                    #env["Apply"].config(text="Select all the field")
+                    self.play_sound("Sound/not_good.mp3")
                 env["Choose3"].destroy()
                 env["Choose3"] = tk.OptionMenu(frame, env["ChooseStr3"], "")
                 env["Choose3"].place(relx=0.45, rely=0.7, relwidth=0.1, relheight=0.04)
@@ -2097,9 +2245,11 @@ class App:
                     params = (p3, p1, p2, self.id)
                     self.mycursor.execute(sql, params)
                     self.mydb.commit()
-                    env["Apply"].config(text="Update success")
+                    #env["Apply"].config(text="Update success")
+                    self.play_sound("Sound/good.mp3")
                 else:
-                    env["Apply"].config(text="Select all the field")
+                    #env["Apply"].config(text="Select all the field")
+                    self.play_sound("Sound/not_good.mp3")
             case Mode.DELETE:
                 match caracteristic:
                     case PokemonCaracteristic.ABILITY:
@@ -2138,9 +2288,11 @@ class App:
                     
                     self.mycursor.execute(sql, params)
                     self.mydb.commit()
-                    env["Apply"].config(text="Delete success")
+                    #env["Apply"].config(text="Delete success")
+                    self.play_sound("Sound/good.mp3")
                 else:
-                    env["Apply"].config(text="Select all the field")
+                    #env["Apply"].config(text="Select all the field")
+                    self.play_sound("Sound/not_good.mp3")
             case _:
                 pass
         self.update_button()
@@ -2165,22 +2317,81 @@ class App:
         entry.insert(0, text)
         self.search_by_name(entry)
         
+    def change_evolution(self, next_pokemon):
+        if next_pokemon:
+            name = ("id_evolution", "id_base")
+        else:
+            name = ("id_base", "id_evolution")
+        sql = "SELECT " + name[0] + " FROM Evolutions WHERE " + name[1] + "=%s AND (id_login=%s OR id_login=1)"
+        params = (self.poke_id,self.id)
+        self.mycursor.execute(sql, params)
+        l = list(self.mycursor.fetchall())
+        if next_pokemon:
+            self.research_sql_dict["Evolution"] = [val[0] for val in l]
+            if len(l) == 0:
+                self.research_sql_dict["Evolution"] = ["None"]
+            else:
+                l = []
+                sql_val = "SELECT name FROM Pokemons WHERE id=%s"
+                for val in self.research_sql_dict["Evolution"]:
+                    self.mycursor.execute(sql_val, (val,))
+                    l.extend([value[0] for value in list(self.mycursor.fetchall())])
+                if len(l) == 0:
+                    self.research_sql_dict["Evolution"] = ["None"]
+                else:
+                    self.research_sql_dict["Evolution"] = deque(l)
+        else:
+            self.research_sql_dict["PreEvolution"] = [val[0] for val in l]
+            if len(l) == 0:
+                self.research_sql_dict["PreEvolution"] = ["None"]
+            else:
+                l = []
+                sql_val = "SELECT name FROM Pokemons WHERE id=%s"
+                for val in self.research_sql_dict["PreEvolution"]:
+                    self.mycursor.execute(sql_val, (val,))
+                    l.extend([value[0] for value in list(self.mycursor.fetchall())])
+                if len(l) == 0:
+                    self.research_sql_dict["PreEvolution"] = ["None"]
+                else:
+                    self.research_sql_dict["PreEvolution"] = deque(l)
+                    
+    def go_to_evolution(self, button):
+        name = button.cget("text")
+        sql = "SELECT id FROM Pokemons WHERE name=%s AND (id_login=1 OR id_login=%s)"
+        params = (name, self.id)
+        self.mycursor.execute(sql, params)
+        l = list(self.mycursor.fetchall())
+        if len(l) >0:
+            id_poke = l[0][0]
+            
+        
+            self.update_research(id_poke)
+    
+    def change_pokemon(self, next_pokemon):
+        if next_pokemon:
+            self.research_sql_dict["Select"].rotate(-1)
+        else:
+            self.research_sql_dict["Select"].rotate(1)
+        self.update_research()
+        
+        
     def search_by_name(self, entry, strict=True):
         text = entry.get()
         if strict:
-            sql = "SELECT id FROM Pokemons WHERE name=%s AND (id_login=1 OR id_login=%s)"
+            sql = "SELECT id FROM Pokemons WHERE name=%s AND (id_login=1 OR id_login=%s) ORDER BY nid"
         else:
-            sql = "SELECT id FROM Pokemons WHERE name LIKE %s AND (id_login=1 OR id_login=%s)"
+            sql = "SELECT id FROM Pokemons WHERE name LIKE %s AND (id_login=1 OR id_login=%s) ORDER BY nid"
             text += "%"
         params = (text, self.id)
         self.mycursor.execute(sql, params)
         l = list(self.mycursor.fetchall())
         self.research_sql_dict["Select"] = deque([val[0] for val in l])
-        self.update_reseach()
+        self.update_research()
+        
         self.change_frame(self.frame_dict["Research"], self.frame_dict["Results"])
     
-    def update_reseach(self):
-        if len(self.research_sql_dict["Select"]) == 0:
+    def update_research(self, id_poke=None):
+        if len(self.research_sql_dict["Select"]) == 0 and id_poke == None:
             try:
                 im = Image.open("Pictures/question_mark.jpg").convert("RGB")
                 im = im.resize((300, 300), Image.Resampling.LANCZOS)
@@ -2202,8 +2413,12 @@ class App:
             self.poke_id = 0
             self.poke_ability = ["None"]
             self.poke_move = ["None"]
+            
         else:
-            id_poke = self.research_sql_dict["Select"][0]
+
+            if id_poke==None:
+                id_poke = self.research_sql_dict["Select"][0]
+
             sql = "SELECT * FROM Pokemons WHERE id=%s"
             self.mycursor.execute(sql, (id_poke,))
             poke = self.mycursor.fetchall()
@@ -2224,7 +2439,7 @@ class App:
                     self.result_sql_dict["PokemonImage"].image = im
                 except:
                     pass
-            self.result_sql_dict["Title"].config(text=name)
+            self.result_sql_dict["Title"].config(text=str(nid) +". "+name)
             sql_type = "SELECT name FROM Types WHERE id=%s"
             self.mycursor.execute(sql_type, (type1,))
             type1 = self.mycursor.fetchall()
@@ -2280,6 +2495,35 @@ class App:
         self.result_sql_dict["Move"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectMove"], *self.poke_move, command=lambda event: self.display_move_description(event, self.result_sql_dict["Move"], self.result_sql_dict["MoveDescription"]))
         self.result_sql_dict["Move"].place(relx=0.78, rely=0.85, relwidth=0.1, relheight=0.04)
         self.result_sql_dict["MoveDescription"].config(state="disabled")
+        
+        
+        self.result_sql_dict["SelectEvolution"].set(value="Evolution")
+        self.result_sql_dict["ButtonEvolution"].destroy()
+        
+        
+        self.result_sql_dict["SelectPreEvolution"].set(value="Pre-evolution")
+        self.result_sql_dict["ButtonPreEvolution"].destroy()
+        
+        self.result_sql_dict["Next"].destroy()
+        self.change_evolution(True)
+        self.change_evolution(False)
+        self.result_sql_dict["Previous"].destroy()
+        
+        if len(self.research_sql_dict["Select"]) > 1 and id_poke == self.research_sql_dict["Select"][0]:
+            self.result_sql_dict["Next"] = tk.Button(self.frame_dict["Results"], text="Next pokemon", width=100, height=100, image=self.result_sql_dict["NextImage"], compound="top", command=lambda: self.change_pokemon(True))
+            self.result_sql_dict["Next"].place(relx=0.9, rely=0.43)
+            
+            self.result_sql_dict["Previous"] = tk.Button(self.frame_dict["Results"], text="Previous pokemon", width=100, height=100, image=self.result_sql_dict["PreviousImage"], compound="top", command=lambda: self.change_pokemon(False))
+            self.result_sql_dict["Previous"].place(relx=0.02, rely=0.43)
+        if self.research_sql_dict["Evolution"] != ['None']:
+            
+            self.result_sql_dict["ButtonEvolution"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectEvolution"], *self.research_sql_dict["Evolution"], command=lambda event: self.go_to_evolution(self.result_sql_dict["ButtonEvolution"]))
+            self.result_sql_dict["ButtonEvolution"].place(relx=0.85, rely=0.76, relwidth=0.1, relheight=0.04)
+        if self.research_sql_dict["PreEvolution"] != ['None']:
+            
+            self.result_sql_dict["ButtonPreEvolution"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectPreEvolution"], *self.research_sql_dict["PreEvolution"], command=lambda event: self.go_to_evolution(self.result_sql_dict["ButtonPreEvolution"]))
+            self.result_sql_dict["ButtonPreEvolution"].place(relx=0.07, rely=0.76, relwidth=0.1, relheight=0.04)
+            
     def display_ability_description(self, event, button, display):
         display.config(state="normal")
         entry = button.cget("text")
@@ -2319,7 +2563,10 @@ class App:
                 text += "Category : " + category[0][0] + "\n"
             else:
                 text += "Category : unknown\n"
-            text += "Power : " + str(power) + "\n"
+            if power != 0:
+                text += "Power : " + str(power) + "\n"
+            else:
+                text += "Power : _\n"
             text += "PP : " + str(pp) + "\n"
             if accuracy == 0:
                 text += "Accuracy : _ \n"
@@ -2333,6 +2580,43 @@ class App:
         else:
             display.insert(tk.END, "No description")
         display.config(state="disabled")
+
+    def play_sound(self, title):
+        pygame.mixer.init()
+        pygame.mixer.Sound(title).play()
+
+    def recognition_by_image(self, filename):
+        try:
+
+            model = tf.keras.models.load_model("pokemon_AI.h5")
+
+            im = image.load_img(filename, target_size=(128,128))
+            im = image.img_to_array(im) / 255.
+            im = np.expand_dims(im, axis=0)
+
+            with open("pokemon_AI.json", "r") as f:
+                pokemon = json.load(f)
+            res = np.argmax(model.predict(im))
+            sql = "SELECT id FROM Pokemons WHERE LOWER(name)=%s AND (id_login=1 OR id_login=%s) LIMIT 1"
+            params = (pokemon[str(int(res))].lower(), self.id)
+            self.mycursor.execute(sql, params)
+            l = self.mycursor.fetchall()
+            if len(l) > 0:
+                self.update_research(id_poke=l[0][0])
+                self.change_frame(self.frame_dict["SearchImage"], self.frame_dict["Results"])
+            else:
+                self.play_sound("Sound/not_good.mp3")
+        except:
+            self.play_sound("Sound/not_good.mp3")
+
+        self.image_select_dict["Image"].destroy()
+        self.image_select_dict["Image"] = tk.Button(self.frame_dict["SearchImage"], text="Image selection",
+                                                    compound="top",
+                                                    command=lambda: self.get_image_path(
+                                                        self.image_select_dict["ImageLabel"],
+                                                        self.image_select_dict["Image"]))
+        self.image_select_dict["Image"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
+
     def mainloop(self):
         self.change_frame(None, self.frame_dict["Login"])
         self.root.mainloop()

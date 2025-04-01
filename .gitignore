@@ -176,3 +176,5 @@ cython_debug/
 
 # Password file
 dbcredentials.py
+# Dataset
+dataset/
