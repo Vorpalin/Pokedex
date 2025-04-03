@@ -57,6 +57,7 @@ class App:
         pygame.mixer.init()
         pygame.mixer.music.load("Sound/music.mp3")
         pygame.mixer.music.play(loops=-1)
+        pygame.mixer.music.set_volume(1)
         self.frame_dict = dict()
         self.frame_dict["Login"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["Choose"] = tk.Frame(self.container, bg="lightgreen")
@@ -76,6 +77,9 @@ class App:
         self.frame_dict["Results"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["SearchImage"] = tk.Frame(self.container, bg="lightblue")
         self.frame_dict["SearchSelection"] = tk.Frame(self.container, bg="lightblue")
+        self.frame_dict["TypeEfficacity"] = tk.Frame(self.container, bg="lightblue")
+        self.frame_dict["TypeSelect"] = tk.Frame(self.container, bg="lightblue")
+        self.frame_dict["SearchFilter"] = tk.Frame(self.container, bg="lightblue")
         for frame in self.frame_dict.values():
             frame.place(relwidth=1, relheight=1)
             
@@ -138,8 +142,14 @@ class App:
         self.login_dict["PasswordNew2"].insert(0, "Confirm your password")
         self.login_dict["PasswordNew2"].bind("<FocusIn>", lambda event: self.fill_entry(event, self.login_dict["PasswordNew2"],"Confirm your password", True))
         self.login_dict["PasswordNew2"].bind("<FocusOut>", lambda event: self.clear_entry(event, self.login_dict["PasswordNew2"],"Confirm your password"))
-        
-        
+
+        self.login_dict["Sound"] = tk.Button(self.frame_dict["Login"], text="Switch the music", bg="#FF6347",
+                                                  command=self.switch_sound)
+        self.login_dict["Sound"].place(relx=0.86, rely=0.93, relwidth=0.1, relheight=0.04)
+
+        self.login_dict["Quit"] = tk.Button(self.frame_dict["Login"], text="Quit", command=self.root.quit)
+        self.login_dict["Quit"].place(relx=0.86, rely=0.05, relwidth=0.1, relheight=0.04)
+
         #%%% [2.1.2] Choose page
         self.choose_dict = dict()
         
@@ -234,7 +244,7 @@ class App:
         self.select_contribute_dict["Moves"] = tk.Button(self.frame_dict["SelectContribution"], text="Moves", compound="top", width=20, height=1, bg="#bf8013", command= lambda: self.change_frame_move())
         self.select_contribute_dict["Moves"].place(relx=0.163, rely=0.92, anchor="center")
         
-        self.select_contribute_dict["Types"] = tk.Button(self.frame_dict["SelectContribution"], text="Types", compound="top", width=20, height=1, bg="lightgreen", command= lambda: self.change_frame_binary(self.frame_dict["ContribType"], self.type_contribute_dict, "Type"))
+        self.select_contribute_dict["Types"] = tk.Button(self.frame_dict["SelectContribution"], text="Types", compound="top", width=20, height=1, bg="lightgreen", command= lambda:self.change_frame(self.frame_dict["SelectContribution"], self.frame_dict["TypeSelect"]))
         self.select_contribute_dict["Types"].place(relx=0.5, rely=0.92, anchor="center")
         
         self.select_contribute_dict["Tiers"] = tk.Button(self.frame_dict["SelectContribution"], text="Tiers", compound="top", width=20, height=1, bg="lightblue", command= lambda: self.change_frame_binary(self.frame_dict["ContribTiers"], self.tier_contribute_dict, "Tier"))
@@ -831,6 +841,38 @@ class App:
         self.result_sql_dict["ButtonPreEvolution"] = tk.OptionMenu(self.frame_dict["Results"], self.result_sql_dict["SelectPreEvolution"], *self.research_sql_dict["PreEvolution"], command=lambda event: self.go_to_evolution(self.result_sql_dict["ButtonPreEvolution"]))
         self.result_sql_dict["ButtonPreEvolution"].place(relx=0.85, rely=0.08, relwidth=0.1, relheight=0.04)
 
+        self.filter_search_dict = dict()
+
+        try:
+            im = Image.open("Pictures/filter.jpg").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+
+            im = ImageTk.PhotoImage(im)
+
+            self.filter_search_dict["Background"] = tk.Label(self.frame_dict["SearchFilter"], image=im)
+            self.filter_search_dict["Background"].image = im
+            self.filter_search_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        self.filter_search_dict["Title"] = tk.Label(self.frame_dict["SearchFilter"], text="Search by filter",
+                                                   font=("Arial", 36, "bold"), fg="black", bg="lightgrey",
+                                                   borderwidth=2,
+                                                   relief="solid")
+        self.filter_search_dict["Title"].pack(pady=20)
+        self.filter_search_dict["Button"] = []
+        for i in range(12):
+            self.filter_search_dict["Button"].append([self.create_filter_button(None, i, self.frame_dict["SearchFilter"], init=True)])
+
+        self.filter_search_dict["Search"] = tk.Button(self.frame_dict["SearchFilter"], text="Search", width=20, height=1,
+                                                     bg="lightgreen", command=self.search_by_filter
+                                                     )
+        self.filter_search_dict["Search"].place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.04)
+
+        self.filter_search_dict["Deconnection"] = tk.Button(self.frame_dict["SearchFilter"], text="Return",
+                                                           compound="top",
+                                                           width=15, height=1, bg="#FF6347",
+                                                           command=self.return_back)
+        self.filter_search_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
 
         self.image_select_dict = dict()
         try:
@@ -885,21 +927,128 @@ class App:
         self.search_selection_dict["Title"].pack(pady=20)
 
         self.search_selection_dict["Name"] = tk.Button(self.frame_dict["SearchSelection"], text="Name", compound="top",
-                                                   width=20, height=1, bg="lightblue",
+                                                   width=20, height=1, bg="#ffa500",
                                                    command=lambda: self.change_frame(self.frame_dict["SearchSelection"],
                                                                                      self.frame_dict["Research"]))
-        self.search_selection_dict["Name"].place(relx=0.79, rely=0.62, anchor="center")
+        self.search_selection_dict["Name"].place(relx=0.21, rely=0.46, anchor="center")
+        self.search_selection_dict["Filter"] = tk.Button(self.frame_dict["SearchSelection"], text="Filter", compound="top",
+                                                       width=20, height=1, bg="lightblue",
+                                                       command=lambda: self.change_frame(
+                                                           self.frame_dict["SearchSelection"],
+                                                           self.frame_dict["SearchFilter"]))
+        self.search_selection_dict["Filter"].place(relx=0.5, rely=0.72, anchor="center")
 
         self.search_selection_dict["Image"] = tk.Button(self.frame_dict["SearchSelection"], text="Image", compound="top",
-                                                width=20, height=1, bg="lightgreen",
+                                                width=20, height=1, bg="#FFFF00",
                                                 command=lambda: self.change_frame(self.frame_dict["SearchSelection"],
                                                                           self.frame_dict["SearchImage"])
                                                         )
-        self.search_selection_dict["Image"].place(relx=0.21, rely=0.62, anchor="center")
+        self.search_selection_dict["Image"].place(relx=0.79, rely=0.46, anchor="center")
 
         self.search_selection_dict["Deconnection"] = tk.Button(self.frame_dict["SearchSelection"], text="Return", compound="top",
                                                          width=15, height=1, bg="#FF6347", command=self.return_back)
         self.search_selection_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
+
+        self.type_efficaty_dict = dict()
+        try:
+            im = Image.open("Pictures/type.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+
+            im = ImageTk.PhotoImage(im)
+
+            self.type_efficaty_dict["Background"] = tk.Label(self.frame_dict["TypeEfficacity"], image=im)
+            self.type_efficaty_dict["Background"].image = im
+            self.type_efficaty_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        self.type_efficaty_dict["Title"] = tk.Label(self.frame_dict["TypeEfficacity"],
+                                                       text=self.title_contribute("Type efficacity"),
+                                                       font=("Arial", 36, "bold"), fg="black", bg="lightgrey",
+                                                       borderwidth=2,
+                                                       relief="solid")
+        self.type_efficaty_dict["Title"].pack(pady=20)
+
+        self.type_efficaty_dict["SelectType1"] = tk.StringVar(value="Attacker")
+
+        self.type_efficaty_dict["Type1"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"], self.type_efficaty_dict["SelectType1"],
+                                              *self.type_contribute_dict["Select"])
+        self.type_efficaty_dict["Type1"].place(relx=0.3, rely=0.33, relwidth=0.1, relheight=0.04)
+
+        self.type_efficaty_dict["SelectType2"] = tk.StringVar(value="Defender")
+
+        self.type_efficaty_dict["Type2"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                         self.type_efficaty_dict["SelectType2"],
+                                                         *self.type_contribute_dict["Select"])
+        self.type_efficaty_dict["Type2"].place(relx=0.6, rely=0.33, relwidth=0.1, relheight=0.04)
+        self.type_efficaty_dict["SelectType3"] = tk.StringVar(value="New attacker")
+
+        self.type_efficaty_dict["Type3"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                         self.type_efficaty_dict["SelectType3"],
+                                                         *self.type_contribute_dict["Select"])
+        self.type_efficaty_dict["Type3"].place(relx=0.3, rely=0.66, relwidth=0.1, relheight=0.04)
+
+        self.type_efficaty_dict["SelectType4"] = tk.StringVar(value="New defender")
+
+        self.type_efficaty_dict["Type4"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                         self.type_efficaty_dict["SelectType4"],
+                                                         *self.type_contribute_dict["Select"])
+        self.type_efficaty_dict["Type4"].place(relx=0.6, rely=0.66, relwidth=0.1, relheight=0.04)
+
+        self.type_efficaty_dict["SelectCoef1"] = tk.StringVar(value="Efficacity")
+
+        self.type_efficaty_dict["Coef1"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                         self.type_efficaty_dict["SelectCoef1"],
+                                                         *["Immune", "Resistant", "Efficient", "Very Efficient"])
+        self.type_efficaty_dict["Coef1"].place(relx=0.4, rely=0.7, relwidth=0.1, relheight=0.04)
+
+
+
+        self.type_efficaty_dict["Confirm"] = tk.Button(self.frame_dict["TypeEfficacity"], text="Confirm", width=20, height=1,
+                                                     bg="lightgreen",
+                                                     command=self.type_efficacity_change)
+        self.type_efficaty_dict["Confirm"].place(relx=0.45, rely=0.92, relwidth=0.1, relheight=0.04)
+        self.type_efficaty_dict["Deconnection"] = tk.Button(self.frame_dict["TypeEfficacity"], text="Return",
+                                                               compound="top",
+                                                               width=15, height=1, bg="#FF6347",
+                                                               command=self.return_back)
+        self.type_efficaty_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
+
+        self.type_select_dict = dict()
+        try:
+            im = Image.open("Pictures/type.png").convert("RGB")
+            im = im.resize((1280, 680), Image.Resampling.LANCZOS)
+
+            im = ImageTk.PhotoImage(im)
+
+            self.type_select_dict["Background"] = tk.Label(self.frame_dict["TypeSelect"], image=im)
+            self.type_select_dict["Background"].image = im
+            self.type_select_dict["Background"].place(relwidth=1, relheight=1)
+        except:
+            pass
+        self.type_select_dict["Title"] = tk.Label(self.frame_dict["TypeSelect"],
+                                                    text="Type contribution",
+                                                    font=("Arial", 36, "bold"), fg="black", bg="lightgrey",
+                                                    borderwidth=2,
+                                                    relief="solid")
+        self.type_select_dict["Title"].pack(pady=20)
+
+        self.type_select_dict["New type"] = tk.Button(self.frame_dict["TypeSelect"], text="Type management", compound="top",
+                                                   width=20, height=1, bg="lightgreen",
+                                                   command= lambda: self.change_frame_binary(self.frame_dict["ContribType"], self.type_contribute_dict, "Type"))
+        self.type_select_dict["New type"].place(relx=0.35, rely=0.9, anchor="center")
+
+        self.type_select_dict["Efficacity"] = tk.Button(self.frame_dict["TypeSelect"], text="Type efficacity",
+                                                      compound="top",
+                                                      width=20, height=1, bg="lightgreen",
+                                                      command=lambda: self.change_frame(self.frame_dict["TypeSelect"],
+                                                                                        self.frame_dict["TypeEfficacity"]))
+        self.type_select_dict["Efficacity"].place(relx=0.65, rely=0.9, anchor="center")
+
+        self.type_select_dict["Deconnection"] = tk.Button(self.frame_dict["TypeSelect"], text="Return",
+                                                            compound="top",
+                                                            width=15, height=1, bg="#FF6347",
+                                                            command=self.return_back)
+        self.type_select_dict["Deconnection"].place(relx=0.95, rely=0.97, anchor="center")
     #%% Methods
     def get_image_path(self, label, button):
         path = filedialog.askopenfilename(
@@ -999,15 +1148,18 @@ class App:
         self.login_dict["PasswordNew2"].config(fg="gray", show="")
     
     def connection(self):
-        sql = "SELECT id FROM Connections WHERE login=%s AND password=%s LIMIT 1"
+        sql = "SELECT id, login, password FROM Connections WHERE login=%s AND password=%s LIMIT 1"
         param1 = self.login_dict["Login"].get()
         param2 = self.login_dict["Password"].get()
         if param1 and param2:
             params = (param1,param2)
             self.mycursor.execute(sql, params)
-            result = self.mycursor.fetchall()
-            if len(result) > 0:
-                self.id = result[0][0]
+            result = list(self.mycursor.fetchall())
+            if any(map(lambda v: v[1]==param1 and v[2]==param2, result)):
+                for p,x,y in result:
+                    if (x,y) == params:
+                        self.id = p
+                        break
                 self.change_frame(self.frame_dict["Login"], self.frame_dict["Choose"])
             else:
                 self.login_dict["Connection"].config(text="Information issue")
@@ -1111,6 +1263,7 @@ class App:
             else:
                 n = "An error occured"
                 n2 = "An error occured"
+            #"""
             env["ChooseStr"].set("Select a pokemon")
             env["Choose"].destroy()
             env["Choose"] = tk.OptionMenu(frame[i], env["ChooseStr"], *self.pokemon_contribute_dict["Select"])
@@ -1119,8 +1272,8 @@ class App:
             env["Choose2"].destroy()
             env["Choose2"] = tk.OptionMenu(frame[i], env["ChooseStr2"], "")
             env["Choose2"].place(relx=0.64, rely=0.5, relwidth=0.1, relheight=0.04)
-            
-            
+            #"""
+
             if self.mode == Mode.UPDATE:
                 env["Choose3"].destroy()
                 env["ChooseStr3"].set(n2)
@@ -1143,7 +1296,58 @@ class App:
         self.pokemon_update["SelectType1"].set(value="Type 1")
         self.pokemon_update["SelectType2"].set(value="Type 2")
         self.pokemon_update["SelectTier"].set(value="Tier")
-        self.pokemon_delete["SelectPokemon"] = tk.StringVar(value="Pokemon")
+        self.pokemon_delete["SelectPokemon"].set(value="Pokemon")
+
+        self.type_efficaty_dict["SelectType1"].set(value="Attacker")
+        self.type_efficaty_dict["Type1"].destroy()
+        self.type_efficaty_dict["Type1"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                         self.type_efficaty_dict["SelectType1"],
+                                                         *self.type_contribute_dict["Select"])
+        self.type_efficaty_dict["Type1"].place(relx=0.2, rely=0.5, relwidth=0.1, relheight=0.04)
+
+        self.type_efficaty_dict["SelectType2"].set(value="Defender")
+        self.type_efficaty_dict["Type2"].destroy()
+        self.type_efficaty_dict["Type2"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                         self.type_efficaty_dict["SelectType2"],
+                                                         *self.type_contribute_dict["Select"])
+        self.type_efficaty_dict["Type2"].place(relx=0.7, rely=0.5, relwidth=0.1, relheight=0.04)
+        self.type_efficaty_dict["SelectType3"].set(value="New attacker")
+        self.type_efficaty_dict["SelectType4"].set(value="New defender")
+        self.type_efficaty_dict["Type3"].place_forget()
+        self.type_efficaty_dict["Type4"].place_forget()
+        if self.mode == Mode.UPDATE:
+            self.type_efficaty_dict["Confirm"].config(bg="lightblue")
+            self.type_efficaty_dict["Type3"].destroy()
+            self.type_efficaty_dict["Type4"].destroy()
+            self.type_efficaty_dict["Type3"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                             self.type_efficaty_dict["SelectType3"],
+                                                             *self.type_contribute_dict["Select"])
+            self.type_efficaty_dict["Type3"].place(relx=0.2, rely=0.66, relwidth=0.1, relheight=0.04)
+
+            self.type_efficaty_dict["Type4"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                             self.type_efficaty_dict["SelectType4"],
+                                                             *self.type_contribute_dict["Select"])
+            self.type_efficaty_dict["Type4"].place(relx=0.7, rely=0.66, relwidth=0.1, relheight=0.04)
+        elif self.mode == Mode.ADD:
+            self.type_efficaty_dict["Confirm"].config(bg="lightgreen")
+        else:
+            self.type_efficaty_dict["Confirm"].config(bg="#ffa500")
+        self.type_efficaty_dict["SelectCoef1"].set(value="Efficacity")
+        self.type_efficaty_dict["Coef1"].place_forget()
+        self.type_efficaty_dict["Title"].config(text=self.title_contribute("Type efficacity"))
+        if self.mode != Mode.DELETE:
+            self.type_efficaty_dict["Coef1"].destroy()
+            self.type_efficaty_dict["Coef1"] = tk.OptionMenu(self.frame_dict["TypeEfficacity"],
+                                                             self.type_efficaty_dict["SelectCoef1"],
+                                                             *["Immune", "Resist", "Efficient", "Very efficient"])
+            self.type_efficaty_dict["Coef1"].place(relx=0.45, rely=0.7, relwidth=0.1, relheight=0.04)
+
+        for i in range(12):
+            while len(self.filter_search_dict["Button"][i]) > 0:
+                b = self.filter_search_dict["Button"][i].pop()
+                b.destroy()
+        for i in range(12):
+            self.filter_search_dict["Button"][i].append(self.create_filter_button(None, i, self.frame_dict["SearchFilter"], init=True))
     def get_binary(self, name, admin):
         sql = "SELECT name FROM " + name +" WHERE id_login=%s"
         if admin:
@@ -1267,7 +1471,10 @@ class App:
             env["Description"].insert(0, "Enter a description")
             env["Description"].config(fg="gray")
         if change:
-            self.change_frame(self.frame_dict["SelectContribution"], frame)
+            if frame != self.frame_dict["ContribType"]:
+                self.change_frame(self.frame_dict["SelectContribution"], frame)
+            else:
+                self.change_frame(self.frame_dict["TypeSelect"], frame)
     
     
     
@@ -2616,6 +2823,363 @@ class App:
                                                         self.image_select_dict["ImageLabel"],
                                                         self.image_select_dict["Image"]))
         self.image_select_dict["Image"].place(relx=0.45, rely=0.5, relwidth=0.1, relheight=0.04)
+
+
+    def type_efficacity_change(self):
+        match self.mode:
+            case Mode.ADD:
+                try:
+
+                    sql = "INSERT INTO TypeEfficacities (id_type1, id_type2, coeff, id_login) VALUES (%s,%s,%s,%s)"
+                    type1 = self.type_efficaty_dict["Type1"].cget("text")
+                    type2 = self.type_efficaty_dict["Type2"].cget("text")
+                    coef = self.type_efficaty_dict["Coef1"].cget("text")
+                    if coef == "Immune":
+                        coef = 0
+                    elif "Resist" == coef:
+                        coef = 1
+                    elif coef == "Efficient":
+                        coef = 2
+                    elif coef == "Very efficient":
+                        coef = 4
+
+                    sql_type = "SELECT id FROM Types WHERE name=%s"
+                    self.mycursor.execute(sql_type, (type1,))
+                    type1 = self.mycursor.fetchall()
+                    self.mycursor.execute(sql_type, (type2,))
+                    type2 = self.mycursor.fetchall()
+
+                    if len(type1) > 0 and len(type2) > 0:
+                        type1 = type1[0][0]
+                        type2 = type2[0][0]
+                        sql_verif = "SELECT * FROM TypeEfficacities WHERE id_type1=%s AND id_type2=%s AND (id_login=1 OR id_login=%s)"
+                        params = (type1,type2, self.id)
+                        self.mycursor.execute(sql_verif, params)
+
+                        if len(list(self.mycursor.fetchall())) == 0:
+                            params = (type1, type2, coef, self.id)
+                            self.mycursor.execute(sql, params)
+                            self.mydb.commit()
+                            self.play_sound("Sound/good.mp3")
+                        else:
+                            self.play_sound("Sound/not_good.mp3")
+                    else:
+                        self.play_sound("Sound/not_good.mp3")
+                except:
+                    self.play_sound("Sound/not_good.mp3")
+            case Mode.UPDATE:
+                try:
+                    sql = "UPDATE TypeEfficacities SET id_type1=%s, id_type2=%s, coeff=%s WHERE id_type1=%s AND id_type2=%s AND id_login=%s"
+                    type1 = self.type_efficaty_dict["Type1"].cget("text")
+                    type2 = self.type_efficaty_dict["Type2"].cget("text")
+                    type1_new = self.type_efficaty_dict["Type3"].cget("text")
+                    type2_new = self.type_efficaty_dict["Type4"].cget("text")
+                    coef = self.type_efficaty_dict["Coef1"].cget("text")
+                    if coef == "Immune":
+                        coef = 0
+                    elif "Resist" == coef:
+                        coef = 1
+                    elif coef == "Efficient":
+                        coef = 2
+                    elif coef == "Very efficient":
+                        coef = 4
+                    params =(type1, type2, coef, type1_new, type2_new, self.id)
+                    self.mycursor.execute(sql, params)
+                    self.mydb.commit()
+                    self.play_sound("Sound/good.mp3")
+                except:
+                    self.play_sound("Sound/not_good.mp3")
+            case Mode.DELETE:
+                try:
+                    sql = "DELETE FROM TypeEfficacities WHERE id_type1=%s AND id_type2=%s AND id_login=%s"
+                    type1 = self.type_efficaty_dict["Type1"].cget("text")
+                    type2 = self.type_efficaty_dict["Type2"].cget("text")
+                    params = (type1, type2, self.id)
+                    self.mycursor.execute(sql, params)
+                    self.mydb.commit()
+                    self.play_sound("Sound/good.mp3")
+                except:
+                    self.play_sound("Sound/not_good.mp3")
+            case _:
+                pass
+        self.update_button()
+
+    def create_filter_button(self, button, index, frame, init=False):
+        list_field = ["Type", "Tier", "Resistant", "Immune", "Efficient", "Very efficient", "Attack", "Defense", "Special Attack", "Special Defense", "Speed", "HP"]
+        list_agregate = ["between", "superior", "inferior", "equal"]
+        list_add = [self.type_contribute_dict["Select"],
+                    self.tier_contribute_dict["Select"],
+                    self.type_contribute_dict["Select"],
+                    self.type_contribute_dict["Select"],
+                    self.type_contribute_dict["Select"],
+                    self.type_contribute_dict["Select"],
+                    list_agregate,
+                    list_agregate,
+                    list_agregate,
+                    list_agregate,
+                    list_agregate,
+                    list_agregate,
+                    ]
+        if init and frame != None:
+            string = tk.StringVar(value="Select your field")
+            b = tk.OptionMenu(frame, string,
+                                                     *list_field, command=lambda value: self.create_filter_button(b, index, frame, init=False))
+            b.place(relx=0.2, rely=0.2+0.05*index, relwidth=0.1, relheight=0.04)
+
+            return b
+        else:
+            if init==False:
+                val = self.filter_search_dict["Button"][index][0].cget("text")
+                ind = list_field.index(val)
+                if ind <= 5:
+                    string = tk.StringVar(value="Select your value")
+                    b = tk.OptionMenu(frame, string,
+                                      *list_add[ind])
+                    b.place(relx=0.4, rely=0.2 + 0.05 * index, relwidth=0.1, relheight=0.04)
+                else:
+                    string = tk.StringVar(value="Select your filter")
+                    b = tk.OptionMenu(frame, string,*list_add[ind],
+                                      command=lambda event: self.create_filter_button(b, index, frame, init=None))
+                    b.place(relx=0.4, rely=0.2 + 0.05 * index, relwidth=0.1, relheight=0.04)
+
+                self.filter_search_dict["Button"][index].append(b)
+            else:
+                val = self.filter_search_dict["Button"][index][1].cget("text")
+                while len(self.filter_search_dict["Button"][index]) > 2:
+                    button = self.filter_search_dict["Button"][index].pop()
+                    button.destroy()
+                l_b = []
+                b = tk.Entry(frame, width=35, fg="gray")
+                b.place(relx=0.6, rely=0.2 + 0.05 * index, relwidth=0.1, relheight=0.04)
+                b.insert(0, "Enter a value")
+                b.bind("<FocusIn>",
+                                               lambda event: self.fill_entry(event, b,
+                                                                             "Enter a value", False))
+                b.bind("<FocusOut>",
+                                               lambda event: self.clear_entry(event, b,
+                                                                              "Enter a value"))
+                l_b.append(b)
+
+                if val == list_agregate[0]:
+                    b2 = tk.Entry(frame, width=35, fg="gray")
+                    b2.place(relx=0.8, rely=0.2 + 0.05 * index, relwidth=0.1, relheight=0.04)
+                    b2.insert(0, "Enter a value")
+                    b2.bind("<FocusIn>",
+                           lambda event: self.fill_entry(event, b2,
+                                                         "Enter a value", False))
+                    b2.bind("<FocusOut>",
+                           lambda event: self.clear_entry(event, b2,
+                                                          "Enter a value"))
+                    l_b.append(b2)
+                self.filter_search_dict["Button"][index].extend(l_b)
+
+    def search_by_filter(self):
+        list_field = ["Type", "Tier", "Attack", "Defense",
+                      "Special Attack", "Special Defense", "Speed", "HP", "Resistant", "Immune", "Efficient", "Very efficient"]
+        list_agregate = ["between", "superior", "inferior", "equal"]
+        list_equiv = [' (type_1=%s OR type_2=%s) ', " tier=%s ", " attack ", " defense ",
+                      " sp_atk ", " sp_def ", " speed ", " hp "]
+        sql = "SELECT id FROM Pokemons WHERE (id_login=1 OR id_login=%s)"
+        l_params = [self.id]
+        verif = True
+        try:
+            for i in range(12):
+                val = self.filter_search_dict["Button"][i][0].cget("text")
+
+                if val in list_field:
+
+                    ind = list_field.index(val)
+                    if ind <= 1:
+                        name = self.filter_search_dict["Button"][i][1].cget("text")
+
+                        sql += "AND" + list_equiv[ind]
+
+                        if ind==0:
+                            sql_type ="SELECT id FROM Types WHERE name=%s"
+                            self.mycursor.execute(sql_type, (name,))
+                            name = self.mycursor.fetchall()
+
+                            if len(name) > 0:
+                                for j in range(2):
+                                    l_params.append(name[0][0])
+                            else:
+                                raise Exception()
+                        else:
+                            sql_type = "SELECT id FROM Tiers WHERE name=%s"
+                            self.mycursor.execute(sql_type, (name,))
+                            name = self.mycursor.fetchall()
+                            if len(name) > 0:
+                                    l_params.append(name[0][0])
+                            else:
+                                raise Exception()
+                    elif ind <= 7:
+                        name = self.filter_search_dict["Button"][i][1].cget("text")
+
+                        sql += " AND" + list_equiv[ind]
+                        if name == list_agregate[0]:
+                            sql += "BETWEEN %s AND %s"
+                            val1 = int(self.filter_search_dict["Button"][i][2].get())
+                            val2 = int(self.filter_search_dict["Button"][i][3].get())
+                            l_params.append(val1)
+                            l_params.append(val2)
+                        else:
+                            val1 = int(self.filter_search_dict["Button"][i][2].get())
+                            l_params.append(val1)
+                            if name == list_agregate[1]:
+                                sql += ">%s"
+                            elif name == list_agregate[2]:
+                                sql += "<%s"
+                            elif name == list_agregate[3]:
+                                sql += "=%s"
+                            else:
+                                raise Exception()
+                    else:
+                        value = self.filter_search_dict["Button"][i][1].cget("text")
+                        sql_type = "SELECT id FROM Types WHERE name=%s"
+                        self.mycursor.execute(sql_type, (value,))
+                        value = self.mycursor.fetchall()
+                        if len(value) > 0:
+                            value = value[0][0]
+                        else:
+                            raise Exception()
+                        sql += " AND "
+                        if ind==8:
+                            sql_im = "SELECT TE.id_type2 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type1=T2.id WHERE TE.coeff=1 AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type1=%s"
+                            sql_im2 = "SELECT TE.id_type2 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type1=T2.id WHERE TE.coeff IN (1,2) AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type1=%s"
+                            self.mycursor.execute(sql_im, (self.id, value))
+                            l_1 = self.mycursor.fetchall()
+                            self.mycursor.execute(sql_im2, (self.id,value))
+                            l_2 = self.mycursor.fetchall()
+                            if len(l_1) > 0:
+                                l_1 = [val[0] for val in list(l_1)]
+                                l_2 = [val[0] for val in list(l_2)]
+                                s1 = " (%s"
+                                for i in range(1, len(l_1)):
+                                    s1 += ",%s"
+                                s1 += ") "
+                                if len(l_2)==0:
+                                    s2 = " (0) "
+                                else:
+                                    s2 = " (%s"
+                                    for i in range(1, len(l_2)):
+                                        s2 += ",%s"
+                                    s2 += ") "
+                                sql += " ((type_2=0 AND type_1 IN" + s1 + ") OR (type_2 IN" + s1 + "AND type_1 IN" + s2 + ") OR (type_2 IN" + s2 + "AND type_1 IN" + s1 + "))"
+                                l_params.extend(l_1)
+                                l_params.extend(l_1)
+                                l_params.extend(l_2)
+                                l_params.extend(l_2)
+                                l_params.extend(l_1)
+                            else:
+                                raise Exception()
+                        elif ind==9:
+                            sql_im = "SELECT TE.id_type2 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type1=T2.id WHERE TE.coeff=0 AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type1=%s"
+                            self.mycursor.execute(sql_im, (self.id,value))
+                            name = self.mycursor.fetchall()
+
+                            if len(name) > 0:
+                                name = [val[0] for val in list(name)]
+
+                                s=" (%s"
+                                for i in range(1, len(name)):
+                                    s += ",%s"
+                                s +=") "
+                                sql += "(type_1 IN" +s +" OR type_2 IN" + s + ')'
+                                l_params.extend(name)
+                                l_params.extend(name)
+                            else:
+                                raise Exception()
+                        elif ind==10:
+                            sql_im = "SELECT TE.id_type1 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type2=T2.id WHERE TE.coeff=2 AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type2=%s"
+                            sql_im2 = "SELECT TE.id_type1 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type2=T2.id WHERE TE.coeff=1 AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type2=%s"
+                            sql_im3 = "SELECT TE.id_type1 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type2=T2.id WHERE TE.coeff=4 AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type2=%s"
+                            self.mycursor.execute(sql_im, (self.id,value))
+                            l_1 = self.mycursor.fetchall()
+                            self.mycursor.execute(sql_im2, (self.id,value))
+                            l_2 = self.mycursor.fetchall()
+                            self.mycursor.execute(sql_im3, (self.id,value))
+                            l_3 = self.mycursor.fetchall()
+                            if len(l_1) > 0:
+                                l_1 = [val[0] for val in list(l_1)]
+                                l_2 = [val[0] for val in list(l_2)]
+                                l_3 = [val[0] for val in list(l_3)]
+                                s1 = " (%s"
+                                for i in range(1, len(l_1)):
+                                    s1 += ",%s"
+                                s1 += ") "
+                                if len(l_2) == 0:
+                                    s2 = " (0) "
+                                else:
+                                    s2 = " (%s"
+                                    for i in range(1, len(l_2)):
+                                        s2 += ",%s"
+                                    s2 += ") "
+                                if len(l_3) == 0:
+                                    s3 = " (0) "
+                                else:
+                                    s3 = " (%s"
+                                    for i in range(1, len(l_3)):
+                                        s3 += ",%s"
+                                    s3 += ") "
+                                sql += " ((type_2=0 AND type_1 IN" + s1 + ") OR (type_2 IN" + s1 + "AND type_1 IN" + s1 + ") OR (type_2 IN" + s2 + "AND type_1 IN" + s3 + ") OR (type_2 IN" + s3 + "AND type_1 IN" + s2 + "))"
+                                l_params.extend(l_1)
+                                l_params.extend(l_1)
+                                l_params.extend(l_1)
+                                l_params.extend(l_2)
+                                l_params.extend(l_3)
+                                l_params.extend(l_3)
+                                l_params.extend(l_2)
+                            else:
+                                raise Exception()
+                        else:
+                            sql_im = "SELECT TE.id_type1 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type2=T2.id WHERE TE.coeff=4 AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type2=%s"
+                            sql_im2 = "SELECT TE.id_type1 FROM TypeEfficacities AS TE JOIN Types AS T2 ON TE.id_type2=T2.id WHERE TE.coeff>1 AND (TE.id_login=1 OR TE.id_login=%s) AND TE.id_type2=%s"
+
+                            self.mycursor.execute(sql_im, (self.id,value))
+
+                            l_1 = self.mycursor.fetchall()
+
+                            self.mycursor.execute(sql_im2, (self.id,value))
+                            l_2 = self.mycursor.fetchall()
+                            if len(l_1) > 0:
+                                l_1 = [val[0] for val in list(l_1)]
+                                l_2 = [val[0] for val in list(l_2)]
+                                s1 = " (%s"
+                                for i in range(1, len(l_1)):
+                                    s1 += ",%s"
+                                s1 += ") "
+                                if len(l_2) == 0:
+                                    s2 = " (0) "
+                                else:
+                                    s2 = " (%s"
+                                    for i in range(1, len(l_2)):
+                                        s2 += ",%s"
+                                    s2 += ") "
+                                sql += " ((type_2=0 AND type_1 IN" + s1 + ") OR (type_2 IN" + s1 + "AND type_1 IN" + s2 + ") OR (type_2 IN" + s2 + "AND type_1 IN" + s1 + "))"
+                                l_params.extend(l_1)
+                                l_params.extend(l_1)
+                                l_params.extend(l_2)
+                                l_params.extend(l_2)
+                                l_params.extend(l_1)
+                            else:
+                                raise Exception()
+        except:
+            self.play_sound("Sound/not_good.mp3")
+            verif = False
+
+        self.update_button()
+        if verif:
+            self.mycursor.execute(sql, tuple(l_params))
+            l = self.mycursor.fetchall()
+            self.research_sql_dict["Select"] = deque([val[0] for val in l])
+            self.update_research()
+            self.change_frame(self.frame_dict["SearchFilter"], self.frame_dict["Results"])
+
+    def switch_sound(self):
+        if pygame.mixer.music.get_volume() == 1:
+            pygame.mixer.music.set_volume(0)
+        else:
+            pygame.mixer.music.set_volume(1)
 
     def mainloop(self):
         self.change_frame(None, self.frame_dict["Login"])
